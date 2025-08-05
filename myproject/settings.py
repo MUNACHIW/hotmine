@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "hotmine",
+    # Add your apps here when you create them
+    # "myapp",
 ]
 
 MIDDLEWARE = [
@@ -60,7 +61,7 @@ ROOT_URLCONF = "myproject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # Add templates directory
+        "DIRS": [],  # Add templates directory
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -124,9 +125,9 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"  # For production static files
 
 # Additional static files directories (for development)
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+# ]
 
 # Media files (for user uploads)
 MEDIA_URL = "/media/"
