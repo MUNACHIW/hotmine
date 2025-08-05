@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,8 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MyProject - Client Demo{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'app.css' %}">
-    {% load static %}
+    <link rel="stylesheet" href="{% static 'hotmine/app.css' %}">
     {% block css_files %} {% endblock %}
     {% block script_files %} {% endblock %}
 </head>
