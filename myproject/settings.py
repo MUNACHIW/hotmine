@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Add your apps here when you create them
-    # "myapp",
+    "hotmine",  # Your app
 ]
 
 MIDDLEWARE = [
@@ -61,7 +61,7 @@ ROOT_URLCONF = "myproject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # Add templates directory
+        "DIRS": [BASE_DIR / "templates"],  # Add templates directory
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
