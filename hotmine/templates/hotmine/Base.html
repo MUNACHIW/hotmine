@@ -4,17 +4,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>
         {% block title %}
         Forex,Bitcoin Cash, Ethereum, Cryptocurrency & Option Trading|Hotmine
         {% endblock %}
     </title>
     <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-
     <link rel="stylesheet" href="{% static 'hotmine/app.css' %}">
     <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
     {% block css_files %}
@@ -22,10 +20,10 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <header class="header d-flex justify-content-center">
-        <div class="container  d-flex justify-content-center align-items-center">
-            <a href="{% url 'home' %}" class="logo"><img src="{% static 'hotmine/images/miney.jpg' %}"
+    <!-- Header - Your exact original structure -->
+    <header class="header">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <a href="{% url 'home' %}"><img class="logo" src="{% static 'hotmine/images/miney.jpg' %}"
                     alt="Hotmine Logo"></a>
             <div id="google_translate_element"></div>
             <nav class="nav d-flex align-items-center">
@@ -50,10 +48,52 @@
                         <a href="">Login</a>
                     </div>
                 </ul>
-
+                <div class="menu-toggler">
+                    <button class="bi bi-list" id="menuToggler"></button>
+                </div>
             </nav>
         </div>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>EXPERIENCE MORE THAN TRADING</h1>
+                <p>1000+ Forex pairs & CFDs on Shares, Indices, Energies, Metals & ETFs*</p>
+                <gecko-coin-price-marquee-widget locale="en" dark-mode="true" transparent-background="true" coin-ids=""
+                    initial-currency="usd"></gecko-coin-price-marquee-widget>
+
+                <div class="hero-buttons">
+                    <a href="" class="">Login</a>
+                    <a href="" class="">Join Us</a>
+                </div>
+            </div>
+            <div class="description">
+                <img src="{% static 'hotmine/images/02.png' %}" alt="Hero Image" class="hero-image">
+            </div>
+        </section>
     </header>
+
+    <!-- Mobile Navigation Box - Slides from top -->
+    <div class="mobile-nav-box" id="mobileNavBox">
+        <ul class="nav-links">
+            <li><a href="" class="active">Home</a></li>
+            <li><a href="">About Us</a></li>
+            <li><a href="">Our Services</a></li>
+            <li><a href="">How it Works</a></li>
+            <li><a href="">Academy</a></li>
+            <div class="dropdown">
+                <a class="dropstyle" role="button" onclick="toggleMobileDropdown(this)">
+                    Legal
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Terms of Service</a></li>
+                    <li><a class="dropdown-item" href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <li><a href="">Contact Us</a></li>
+            <div class="login-button">
+                <a href="">Login</a>
+            </div>
+        </ul>
+    </div>
 
     <!-- Main Content -->
     <main>
@@ -68,18 +108,64 @@
             new google.translate.TranslateElement(
                 {
                     pageLanguage: 'en',
-                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu', // Optional: limit languages
-
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
                 },
                 'google_translate_element'
             );
         }
+
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggler = document.getElementById('menuToggler');
+            const mobileNavBox = document.getElementById('mobileNavBox');
+
+            function toggleMobileNav() {
+                mobileNavBox.classList.toggle('active');
+                menuToggler.classList.toggle('bi-list');
+                menuToggler.classList.toggle('bi-x');
+
+                // Prevent body scroll when menu is open
+                document.body.style.overflow = mobileNavBox.classList.contains('active') ? 'hidden' : '';
+            }
+
+            function closeMobileNav() {
+                mobileNavBox.classList.remove('active');
+                menuToggler.classList.add('bi-list');
+                menuToggler.classList.remove('bi-x');
+                document.body.style.overflow = '';
+            }
+
+            // Toggle menu on button click
+            menuToggler.addEventListener('click', toggleMobileNav);
+
+            // Close menu when a link is clicked
+            const mobileLinks = mobileNavBox.querySelectorAll('a:not(.dropstyle)');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', closeMobileNav);
+            });
+
+            // Close menu on window resize if it's open
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 1000) {
+                    closeMobileNav();
+                }
+            });
+        });
+
+        // Mobile dropdown toggle
+        function toggleMobileDropdown(element) {
+            const dropdown = element.parentElement;
+            dropdown.classList.toggle('show');
+        }
     </script>
+
     <script type="text/javascript"
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script defer src="{% static 'hotmine/bootstrap.bundle.js' %}"></script>
-    {% block js_files %}
+    <script src="https://widgets.coingecko.com/gecko-coin-price-marquee-widget.js"></script>
 
+
+    {% block js_files %}
     {% endblock %}
 </body>
 
