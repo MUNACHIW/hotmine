@@ -10,30 +10,25 @@ html {
 
 body{
     font-family: 'Poppins', sans-serif !important;
+    background: #131519 !important;
 }
 
 .header{
-   background: linear-gradient(to top, #26263088 2%, #19191c 60%),
-    url("./images/high-angle-beautiful-buildings-nighttime.jpg");
-   -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+   
     width: 100% !important;
-    padding: 10px 15px;
-    min-height: 80px;
-    position: relative;
 }
 
 .header .container-fluid {
-    max-width: 1400px;
+    width: 100% !important;
     margin: 0 auto;
-    position: fixed;
-    top: 0;
-    z-index: 100;
+    background: black !important ;
     height: auto;
+    padding-bottom: 10px !important;
     left: 0;
+    display: flex !important;
+    align-items: center !important;
+position: fixed !important;
+    top: 0px !important;
     padding-left: 10px !important;
     padding-right: 10px !important;
 }
@@ -199,7 +194,7 @@ html[lang="ur"] {
     border-radius: 8px;
     color: white;
     width: 45px;
-    height: 45px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,10 +220,16 @@ html[lang="ur"] {
     border-bottom: 2px solid #FFD007;
 }
 .hero{
-    margin-top: 100px;
     display: flex;
     justify-content: space-around;
-    align-items: center
+    align-items: center;
+    background: linear-gradient(to top, #26263088 2%, #19191c 60%),
+    url("./images/high-angle-beautiful-buildings-nighttime.jpg");
+   -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 .hero .hero-content {
     width: 45%;
@@ -432,7 +433,6 @@ html[lang="ur"] {
 @media screen and (max-width: 1000px) {
     .header {
         padding: 8px 15px;
-        min-height: 70px;
     }
     
     .header .nav-links {
@@ -500,7 +500,6 @@ html[lang="ur"] {
     
     .menu-toggler button {
         width: 40px;
-        height: 40px;
         font-size: 18px;
     }
     
@@ -531,4 +530,223 @@ html[lang="ur"] {
     .mobile-nav.active {
         right: 0;
     }
+}
+.partners{
+    background: #131519;
+    color:white;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+.partners h1{
+    font-weight: lighter;
+    font-size: 25px;
+    letter-spacing: 8px;
+    margin-top: 20px;
+}
+.About{
+    background: #16181C;
+     display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+}
+.About .content{
+    width: 45%;
+    padding: 10px;
+}
+.About .content h3{
+    font-size: 20px;
+    font-weight: lighter;
+    color: #FFf;
+    margin-bottom: 20px;
+    letter-spacing: 8px;
+}
+.About .content h1{
+    color: white;
+    font-weight: bold;
+}
+.About .content div{
+    margin-top: 15px;
+}
+.About .content div a{
+    background: #FFD007;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.About .content div a:hover{
+    background: white;
+    color: black;
+}
+.About .content p{
+    color:#fff;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.About .description{
+    width: 40%;
+}
+.About .description img{
+    width: 100%;;
+}
+@media  screen and (max-width:850px) {
+    
+    .About {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .About .content {
+        width: 100%;
+        text-align: center;
+    }
+
+    .About .description {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .About .content h1 {
+        font-size: 2rem;
+    }
+
+    .About .content p {
+        font-size: 1.2rem;
+    }       
+}
+@media  screen and (max-width:500px) {
+    .About .content{
+        text-align: left;
+    }
+}
+
+
+
+.grid-section{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+       gap: 10px;
+       background: #202427;
+       padding: 30px;
+}
+.grid-section div{
+    background: #e6ba06;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    width: 100%;
+    height:auto;
+    padding: 15px;
+    border-radius: 25px;
+}
+.grid-section div img{
+    margin-bottom: 20px;
+} 
+.grid-section div h2{
+    font-size: 28px;
+    letter-spacing: 6px;
+}
+.grid-section div span{
+    color:#007BFF;
+    font-size: 50px;
+    font-weight: lighter;
+}
+.grid-section div p{
+    color: rgb(85, 82, 82);
+}
+.grid-section div:nth-child(5){
+            grid-column-start:1 ;
+            grid-column-end: 3;
+}
+@media screen and (max-width:850px) {
+       .grid-section {
+           grid-template-columns: 1fr;
+       }
+       .grid-section div:nth-child(5){
+                     grid-column-start:1 ;
+            grid-column-end: 1;
+       }
+   }
+.New_To_Forex{
+    background: #15171A;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+}
+.New_To_Forex .content{
+    width: 45%;
+    padding: 10px;
+}
+.New_To_Forex .content h3{
+    font-size: 20px;
+    font-weight: lighter;
+    color: #FFf;
+    margin-bottom: 20px;
+    letter-spacing: 8px;
+}
+.New_To_Forex .content h1{
+    color: white;
+    font-weight: bold;
+}
+.New_To_Forex .content div{
+    margin-top: 15px;
+}
+.New_To_Forex .description{
+    width: 40%;
+}
+.New_To_Forex .description img{
+    width: 100%;
+}
+@media  screen and (max-width:850px) {
+    
+    .New_To_Forex{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .New_To_Forex .content {
+        width: 100%;
+        text-align: center;
+    }
+
+    .New_To_Forex .description {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .New_To_Forex .content h1 {
+        font-size: 2rem;
+    }
+
+    .New_To_Forex .content p {
+        font-size: 1.2rem;
+    }       
+}
+@media  screen and (max-width:500px) {
+    .New_To_Forex .content{
+        text-align: left;
+    }
+}
+.color{
+    color: gainsboro !important;
+}
+@media  screen and (max-width: 1200px) {
+.responsive-coin-display {
+    flex-direction: column !important;
+    align-items: center;}
+
+.gecko{
+    width: 100% !important;
+    margin: 10px;
+}
 }

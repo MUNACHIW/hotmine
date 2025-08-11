@@ -2,6 +2,123 @@
 {% load static %}
 
 {% block content %}
-<!-- Hero Section -->
+<section class="partners">
+    <h1>Executive Partners</h1>
+    <marquee direction="right" scrollamount="15">
+        <img src="{% static 'hotmine/images/c1.png' %}" width="100px" class="m-4" alt="Partner 1">
+        <img src="{% static 'hotmine/images/c2.png' %}" width="100px " class="m-4" alt="Partner 2">
+        <img src="{% static 'hotmine/images/c3.png' %}" width="100px" class="m-4" alt="Partner 3">
+        <img src="{% static 'hotmine/images/c4.png' %}" width="100px" class="m-4" alt="Partner 4">
+        <img src="{% static 'hotmine/images/c5.png' %}" width="100px" class="m-4" alt="Partner 5">
+        <img src="{% static 'hotmine/images/c6.png' %}" width="100px" class="m-4" alt="Partner 6">
+        <img src="{% static 'hotmine/images/c8.png' %}" width="100px" class="m-4" alt="Partner 7">
+        <img src="{% static 'hotmine/images/c9.png' %}" width="100px" class="m-4" alt="partner 9">
+        <img src="{% static 'hotmine/images/c11.png' %}" width="100px" class="m-4" alt="partner 11">
+    </marquee>
+</section>
+<section class="About">
+    <div class="description">
+        <img src="{% static 'hotmine/images/04.png' %}" alt="About Hotmine">
+    </div>
+    <div class="content">
+        <h3>ABOUT US</h3>
+        <h1>What is Hotmine?</h1>
+        <p> Hotmine is a fully certified and licensed company.Established in 2015, as a fully functional and trusted
+            currency trading/investment company, verified by alot of users. Our
+            options are made to meet the needs and requirements of all traders.
+
+        </p>
+        <div>
+            <a href="">Join Us</a>
+        </div>
+    </div>
+</section>
+<section class="grid-section">
+    <div>
+        <img src="{% static 'hotmine/images/1.c6f1af30fa61.svg' %}" alt="">
+        <h2><span>680</span>k+</h2>
+        <p>Active Users</p>
+    </div>
+    <div>
+        <img src="{% static 'hotmine/images/3.b93ee16a80ad.svg' %}" alt="">
+        <h2><span>989</span>M+</h2>
+        <p>Paid Profits</p>
+    </div>
+    <div>
+        <img src="{% static 'hotmine/images/2.6b6de0095bdb.svg' %}" alt="">
+        <h2><span>10</span></h2>
+        <p>Awards</p>
+    </div>
+    <div>
+        <img src="{% static 'hotmine/images/4.5b964d61011b.svg' %}" alt="">
+        <h2>$<span>13</span>M+</h2>
+        <p>Monthly Average</p>
+    </div>
+    <div>
+        <img src="{% static 'hotmine/images/5.b63e90f01f7c.svg' %}" alt="">
+        <h2><span>193</span></h2>
+        <p>Supported Countries</p>
+    </div>
+</section>
+<section class="New_To_Forex">
+    <div class="content">
+        <h3>NEW TO FOREX?</h3>
+        <h1>WHAT IS FOREX</h1>
+        <p>
+            The foreign exchange market is a global decentralized or over-the-counter market for the trading of
+            currencies. This market determines foreign exchange rates for every currency. It includes all aspects of
+            buying, selling and exchanging currencies at current or determined prices.
+        </p>
+        <h1>WHAT IS CRYPTOCURRENCY</h1>
+        <p>
+            Crypto Currency is a digital currency, created and held electronically. It is an internet-based medium of
+            exchange which uses cryptographic functions to conduct financial transactions. They are not printed, like
+            other currencies – they are produced by people, and increasingly businesses, running computers all around
+            the world, using software that solves mathematical problems.
+        </p>
+    </div>
+    <div class="description">
+        <img src="{% static 'hotmine/images/01.png' %}" alt="About Hotmine">
+    </div>
+</section>
+<section class="d-flex flex-column align-items-center text-center p-4">
+    <h1 class="text-white  fw-bold">Trade Top Cryptos (CFD)</h1>
+    <p class="text-white">
+        Cryptocurrencies available on Hotmine.
+    </p>
+</section>
+<section class="responsive-coin-display d-flex p-5 justify-content-around align-items-center flex-wrap">
+    <gecko-coin-ticker-widget locale="en" class="gecko" style="width: 25%;" dark-mode="true"
+        initial-currency="usd"></gecko-coin-ticker-widget>
+    <gecko-coin-ticker-widget locale="en" class="gecko" style="width: 25%;" dark-mode="true" coin-id="ethereum"
+        initial-currency="usd"></gecko-coin-ticker-widget>
+    <gecko-coin-ticker-widget locale="en" class="gecko" style="width: 25%;" dark-mode="true" coin-id="bitcoin-cash"
+        initial-currency="usd"></gecko-coin-ticker-widget>
+</section>
+<section class="d-flex flex-column align-items-center text-center p-4">
+    <h1 class="text-white  fw-bold">WHY TRADE WITH Hotmine</h1>
+    <p class="color    w-75 mt-4">
+        You do not need to have any previous trading experience to get started, Our experts are ready to guide you
+        through the process. The interface is remarkably user friendly. We have worked hard to ensure processes are fast
+        and intuitive with our in-depth training materials to speed up your learning process.
+    </p>
+</section>
+<section class="phoneview">
+    <div class="content">
+
+    </div>
+    <div class="description">
+
+    </div>
+    <div class="content">
+
+    </div>
+</section>
+
+{% block js_files %}
+<script src="https://widgets.coingecko.com/gecko-coin-ticker-widget.js"></script>
+
+{% endblock %}
+
 
 {% endblock %}

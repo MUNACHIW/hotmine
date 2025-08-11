@@ -22,7 +22,8 @@
 <body>
     <!-- Header - Your exact original structure -->
     <header class="header">
-        <div class="container-fluid d-flex justify-content-center align-items-center">
+        <div class="container-fluid d-flex justify-content-center align-items-center"
+            style="position: sticky; top: 0; z-index: 100; background:black; width:100%;">
             <a href="{% url 'home' %}"><img class="logo" src="{% static 'hotmine/images/miney.jpg' %}"
                     alt="Hotmine Logo"></a>
             <div id="google_translate_element"></div>
@@ -53,23 +54,24 @@
                 </div>
             </nav>
         </div>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>EXPERIENCE MORE THAN TRADING</h1>
-                <p>1000+ Forex pairs & CFDs on Shares, Indices, Energies, Metals & ETFs*</p>
-                <gecko-coin-price-marquee-widget locale="en" dark-mode="true" transparent-background="true" coin-ids=""
-                    initial-currency="usd"></gecko-coin-price-marquee-widget>
 
-                <div class="hero-buttons">
-                    <a href="" class="">Login</a>
-                    <a href="" class="">Join Us</a>
-                </div>
-            </div>
-            <div class="description">
-                <img src="{% static 'hotmine/images/02.png' %}" alt="Hero Image" class="hero-image">
-            </div>
-        </section>
     </header>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>EXPERIENCE MORE THAN TRADING</h1>
+            <p>1000+ Forex pairs & CFDs on Shares, Indices, Energies, Metals & ETFs*</p>
+            <gecko-coin-price-marquee-widget locale="en" dark-mode="true" transparent-background="true" coin-ids=""
+                initial-currency="usd"></gecko-coin-price-marquee-widget>
+
+            <div class="hero-buttons">
+                <a href="" class="">Login</a>
+                <a href="" class="">Join Us</a>
+            </div>
+        </div>
+        <div class="description">
+            <img src="{% static 'hotmine/images/02.png' %}" alt="Hero Image" class="hero-image">
+        </div>
+    </section>
 
     <!-- Mobile Navigation Box - Slides from top -->
     <div class="mobile-nav-box" id="mobileNavBox">
