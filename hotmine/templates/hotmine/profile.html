@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Hotmine</title>
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Welcome, {{ user.first_name }}!</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Phone:</strong> {{ user.userprofile.phone_number|default:"Not provided" }}</p>
+                        <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+
+                        <div class="mt-4">
+                            <a href="" class="btn btn-primary">Go to Dashboard</a>
+                            <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

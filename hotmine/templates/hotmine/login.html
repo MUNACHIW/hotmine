@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>
+        {% block title %}
+        Login | Hotmine - The Better Way to Trade and Invest Online
+        {% endblock %}
+    </title>
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'hotmine/login.css' %}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+    {% block css_files %}
+    {% endblock %}
+</head>
+
+<body>
+    <section>
+        <a href="{% url 'home' %}">
+            <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
+        </a>
+    </section>
+
+    <!-- Display Messages -->
+    <!-- {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %} -->
+
+    <form method="post" class="login-form">
+        {% csrf_token %}
+        <h2 class="text-center text-black">User Login</h2>
+
+        <!-- Display form errors -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-primary my-4">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class>
+            <label for="{{ form.username.id_for_label }}" class="my-2 fw-bold">Email Address</label><br>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <div class="text-danger">
+                {% for error in form.username.errors %}
+                <small>{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}" class="my-2 fw-bold">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <div class="text-danger">
+                {% for error in form.password.errors %}
+                <small>{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="my-3">Login</button>
+
+        <div class="form-footer">
+            <p class="text-center">Forgot Your Password <a href="">Reset</a></p>
+            <p class="text-center"> Dont Have An Account Yet? <a href="{% url 'signup' %}">Sign Up</a>
+            </p>
+            <p class="text-center my-2">© Copyright 2018 Hotmine. All rights
+                reserved.
+            </p>
+        </div>
+    </form>
+</body>
+
+</html>
