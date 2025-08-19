@@ -91,7 +91,7 @@
             </div>
             <li><a href="">Contact Us</a></li>
             <div class="login-button">
-                <a href="">Login</a>
+                <a href="/login">Login</a>
             </div>
         </ul>
     </div>
@@ -101,6 +101,8 @@
         {% block content %}
         <!-- Your page content goes here -->
         {% endblock %}
+        <div id="popup-container"></div>
+
     </main>
 
     <!-- Google Translate Script -->
@@ -158,12 +160,62 @@
             const dropdown = element.parentElement;
             dropdown.classList.toggle('show');
         }
+
+
+
+
+        const messagesLeft = [
+            "🎉 Alice just earned $5000 USD!",
+            "🔥 Mining boost activated!",
+            "💰 New payout sent to Atlanta"
+        ];
+
+        const messagesRight = [
+            "🚀 John just joined the network!",
+            "📈 Hashrate increased by 20%",
+            "🎯 Somebody is trading with $3000"
+        ];
+
+        function showPopup(message, side = "right", level = 1) {
+            const popup = document.createElement("div");
+            popup.className = `popup ${side}${level}`;
+
+            // Highlight numbers like $5000 or $3000
+            const formattedMessage = message.replace(/\$?(\d{3,})/g, (match) => {
+                return `<span class="highlight">${match}</span>`;
+            });
+
+            popup.innerHTML = formattedMessage;
+
+            document.getElementById("popup-container").appendChild(popup);
+
+            // Trigger animation
+            setTimeout(() => popup.classList.add("show"), 100);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                popup.classList.remove("show");
+                setTimeout(() => popup.remove(), 600);
+            }, 5000);
+        }
+
+
+        // Show popups in sequence
+        setInterval(() => {
+            const msgLeft = messagesLeft[Math.floor(Math.random() * messagesLeft.length)];
+            const msgRight = messagesRight[Math.floor(Math.random() * messagesRight.length)];
+
+            showPopup(msgLeft, "left", 1); // Bottom left, higher z-index
+            setTimeout(() => showPopup(msgRight, "right", 2), 2000); // Above right, lower z-index
+        }, 8000);
+
     </script>
 
     <script type="text/javascript"
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script defer src="{% static 'hotmine/bootstrap.bundle.js' %}"></script>
     <script src="https://widgets.coingecko.com/gecko-coin-price-marquee-widget.js"></script>
+
 
 
     {% block js_files %}
