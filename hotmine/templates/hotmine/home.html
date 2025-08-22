@@ -275,72 +275,180 @@
 </section>
 <section class="p-4">
     <h1 class="text-white text-center my-4 fw-lighter">RECENT DEPOSIT AND WITHDRAWAL</h1>
-    <div class="d-flex justify-content-evenly align-items-center">
-        <div class="latestdeposit w-50 m-5">
-            <marquee behavior="scroll" direction="up">
-                <table class="table table-dark">
+    <div class="responsive-wallet d-flex justify-content-center align-items-center">
+        <div class="latestdeposit w-45 m-5">
+            <marquee behavior="scroll" direction="up" style="width: 100%;">
+                <table class="  text-white" style="background: black !important;  text-align: center; width: 100%;">
                     <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                        <tr style="border-bottom: 1px solid white; height:8vh; padding-left:10px;
+                        padding-right:10px;">
+                            <td>Status</td>
+                            <td>Amount(USD)</td>
+                            <td style="text-align: right;">
+                                <p style="margin-right: 10px;">Wallet</p>
+                            </td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">5000</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td><button type="button" class="btn btn-warning   m-3"> <i
+                                        class="fa fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$200</td>
+                            <td>0x32Be343B94f860124dC4fEeBD38C102D88</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$2000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$50000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$43900</td>
+                            <td>1Adm1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$2000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$6000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-warning m-3"><i class="fa
+                                    fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$13000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">2000</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
                         </tr>
                         <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>John</td>
-                            <td>Doe</td>
-                            <td>@social</td>
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">500</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
                         </tr>
                     </tbody>
                 </table>
             </marquee>
         </div>
-        <div class="latestwithdraws w-50 m-5">
+        <div class="latestwithdraws w-45 m-5">
             <marquee behavior="scroll" direction="down">
 
 
-                <table class="table table-dark">
+                <table class="  text-white" style="background: black !important;  text-align: center;">
                     <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                        <tr style="border-bottom: 1px solid white; height:8vh; padding-left:10px;
+                        padding-right:10px;">
+                            <td>Status</td>
+                            <td>Amount(USD)</td>
+                            <td style="text-align: right;">
+                                <p style="margin-right: 10px;">Wallet</p>
+                            </td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">5000</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td><button type="button" class="btn btn-warning   m-3"> <i
+                                        class="fa fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$200</td>
+                            <td>0x32Be343B94f860124dC4fEeBD38C102D88</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$2000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-warning m-3"><i class="fa
+                                    fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$15000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-warning m-3"><i class="fa
+                                    fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$43000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-warning m-3"><i class="fa
+                                    fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$8000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-success m-3">Confirmed</button>
+                            </td>
+                            <td>$8000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td>
+                                <button type="button" class="btn btn-warning m-3"><i class="fa
+                                    fa-exclamation-triangle"></i>Pending</button>
+                            </td>
+                            <td>$13000</td>
+                            <td>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid white;">
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">2000</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
                         </tr>
                         <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>John</td>
-                            <td>Doe</td>
-                            <td>@social</td>
+                            <td button type="button" class="btn btn-success      m-3">Confirmed</button>
+                            </td>
+                            <td class="m-3">500</td>
+                            <td class="m-3">LZz3eYqJZz3eYqJZz4eYqJZz3eYqJZz3eYqJ</td>
                         </tr>
                     </tbody>
                 </table>
