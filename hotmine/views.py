@@ -81,4 +81,7 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, "hotmine/profile.html", {"user": request.user})
+    if request.user.is_authenticated:
+        return render(request, "hotmine/profile.html", {"user": request.user})
+    else:
+        return redirect("login")
