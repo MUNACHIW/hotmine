@@ -34,10 +34,12 @@ header .container-fluid {
     align-items: center !important;
     position: fixed !important;
     top: 0px !important;
-    z-index: 100;
+    z-index: 200;
     box-sizing: border-box;
 }
-
+.depocolor{
+    background: #D4EDDA !important;
+}
 .header ul{
     list-style:none;
     justify-content: center;
@@ -77,7 +79,7 @@ nav {
 }
 
 /* Google Translate Styling */
-#google_translate_element {
+/* #google_translate_element {
     margin: 0 1rem 0 0;
     position: relative;
     z-index: 1000;
@@ -86,31 +88,31 @@ nav {
 
 .goog-te-banner-frame.skiptranslate {
     display: none !important;
-}
+} */
 
-.goog-te-gadget {
+/* .goog-te-gadget {
     font-family: 'Poppins', sans-serif !important;
     font-size: 12px !important;
     color: #fff !important;
     background: transparent !important;
     width: auto;
-}
+} */
 
 /* Language-specific adjustments */
-html[lang="de"] .button-text,
+/* html[lang="de"] .button-text,
 html[lang="fi"] .button-text,
 html[lang="nl"] .button-text {
     font-size: 0.9em;
     line-height: 1.2;
-}
+} */
 
 /* RTL languages */
-html[lang="ar"], 
+/* html[lang="ar"], 
 html[lang="he"],
 html[lang="fa"],
 html[lang="ur"] {
     direction: rtl;
-}
+} */
 
 .logo{
     width: auto;
@@ -1496,6 +1498,36 @@ gecko-coin-list-widget {
     max-width: 100%;
     overflow: hidden;
 }
+.latest-withdraws{
+    background: pink;
+    padding: 10px;
+    color: white;
+    width: 100%;
+    position:sticky;
+    top: 0;
+    z-index: 100;
+}
+.bar{
+    background: white;
+    padding: 8px;
+    position: sticky;
+    z-index: 100;
+    top: 50px;
+}
+.latestwithdraws {
+    overflow-y: scroll;
+    height: 60vh;
+     -webkit-user-select: none;
+    user-select: none;
+    cursor: none;
+    -webkit-user-drag: none;
+}
+@media screen and (max-width:600px) {
+    .latestwithdraws{
+        width: 100% !important;
+    }
+}
+
 
 /* Text content responsive sizing */
 .text-center h1 {

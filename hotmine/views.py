@@ -13,7 +13,10 @@ def home(request):
 
 
 def dashboard(request):
-    return render(request, "hotmine/dashboard.html")
+    if request.user.is_authenticated:
+        return render(request, "hotmine/dashboard.html")
+    else:
+        return redirect("login")
 
 
 def signup_view(request):
@@ -60,7 +63,7 @@ def login_view(request):
                 login(request, user)
                 messages.success(request, f"Welcome back, {user.first_name}!")
                 # Redirect to next page or home
-                next_page = request.GET.get("next", "profile")
+                next_page = request.GET.get("next", "dashboard")
                 return redirect(next_page)
         else:
             messages.error(request, "Invalid username/email or password.")

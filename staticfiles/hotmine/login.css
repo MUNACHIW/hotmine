@@ -61,3 +61,37 @@ section img{
    
     
 }
+#google_translate_element {
+    margin: 0 1rem 0 0;
+    position: relative;
+    z-index: 1000;
+    flex-shrink: 0;
+}
+
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 12px !important;
+    color: #fff !important;
+    background: transparent !important;
+    width: 59px;
+}
+
+/* Language-specific adjustments */
+html[lang="de"] .button-text,
+html[lang="fi"] .button-text,
+html[lang="nl"] .button-text {
+    font-size: 0.9em;
+    line-height: 1.2;
+}
+
+/* RTL languages */
+html[lang="ar"], 
+html[lang="he"],
+html[lang="fa"],
+html[lang="ur"] {
+    direction: rtl;
+}
