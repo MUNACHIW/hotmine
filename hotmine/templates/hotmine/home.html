@@ -275,8 +275,12 @@
 </section>
 <section class="p-4">
     <h1 class="text-white text-center my-4 fw-lighter">RECENT DEPOSIT AND WITHDRAWAL</h1>
-    <div class="responsive-wallet d-flex justify-content-center align-items-center">
-        <div class="latestdeposit w-45 m-5">
+    <div class="responsive-wallet d-flex justify-content-center align-items-center" style="user-select: none;">
+        <div class="latestwithdraws w-45 m-5">
+            <div class="latest-withdraws depocolor">
+                <h1 class="fs-3 "> <span class="fw-bold">+</span> Latest Deposits</h1>
+            </div>
+            <div class="bar"></div>
             <marquee behavior="scroll" direction="up" style="width: 100%;">
                 <table class="  text-white" style="background: black !important;  text-align: center; width: 100%;">
                     <thead>
@@ -364,6 +368,10 @@
             </marquee>
         </div>
         <div class="latestwithdraws w-45 m-5">
+            <div class="latest-withdraws">
+                <h1 class="fs-3"> <span class="fw-bold">-</span> Latest Withdraws</h1>
+            </div>
+            <div class="bar"></div>
             <marquee behavior="scroll" direction="down">
 
 

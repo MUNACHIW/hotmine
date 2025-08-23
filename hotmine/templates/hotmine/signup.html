@@ -25,6 +25,7 @@
             <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
         </a>
     </section>
+    <div id="google_translate_element"></div>
 
     <!-- Display Messages -->
     <!-- {% if messages %}
@@ -137,6 +138,19 @@
             </p>
         </div>
     </form>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>
