@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #000;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.logo {
+  color: orange;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-links li {
+  margin: 20px 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.nav-links i {
+  margin-right: 10px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: orange;
+}
+
+.nav-links a:hover i {
+  transform: scale(1.2);
+  color: orange;
+}
+
+.tradingview-widget-container {
+  flex: 1;
+}
