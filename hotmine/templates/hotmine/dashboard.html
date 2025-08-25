@@ -8,6 +8,7 @@
     <title>Dashboard </title>
     <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
     <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
 </head>
 
 <body>
@@ -28,7 +29,7 @@
                 <li><a href="#"><i class="bi bi-box-arrow-right"></i> Downline</a></li>
                 <li><a href="#"><i class="bi bi-box-arrow-right"></i> Change Password</a></li>
                 <li><a href="#"><i class="bi bi-box-arrow-right"></i> Withdrawal</a></li>
-                <li class="active"><a href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
 
             </ul>
         </div>
@@ -36,16 +37,17 @@
         <div class="tradingview-widget-container" id="mainContent">
             <div class="navbar d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="bi bi-list"></i>
-                    </button>
+
                     <h2 class="m-2">Dashboard</h2>
                     <div id="google_translate_element"></div>
                 </div>
-                <div>
-                    <span><a href="">Account</a></span>
-                    <span><a href="">Log out</a></span>
+                <div class="d-flex align-items-center dashaccount">
+                    <span class="dashaccount"><a href="">Account</a></span>
+                    <span class="dashaccount"><a href="">Log out</a></span>
                 </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
             </div>
 
             <section class="holder">

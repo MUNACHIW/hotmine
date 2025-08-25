@@ -49,6 +49,7 @@ body::-webkit-scrollbar {
     box-sizing: border-box;
     position: fixed;
     height: 100%;
+    overflow-y: scroll;
     left: 0;
     top: 0;
     transition: transform 0.3s ease;
@@ -122,6 +123,7 @@ body::-webkit-scrollbar {
     top: 0px;
     z-index: 100;
     background: white;
+    width: 100%;
 }
 
 .navbar a {
@@ -179,6 +181,9 @@ body::-webkit-scrollbar {
 .overlay.show {
     display: block;
 }
+.dashaccount{
+    display: flex !important;
+}
 
 /* Mobile Styles */
 @media (max-width: 768px) {
@@ -196,6 +201,9 @@ body::-webkit-scrollbar {
 
     .menu-toggle {
         display: block;
+    }
+    .dashaccount{
+        display: none !important;
     }
 
     .holder {
