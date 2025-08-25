@@ -1,60 +1,235 @@
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+/* Universal scrollbar hiding */
+* {
+    -ms-overflow-style: none;        /* IE and Edge */
+    scrollbar-width: none;           /* Firefox */
 }
 
-.container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+*::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;         /* Chrome, Safari, Edge */
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    -ms-overflow-style: none;        /* IE and Edge */
+    scrollbar-width: none;           /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;         /* Chrome, Safari, Edge */
+}
+
+.container-fluid {
+    display: flex;
+    height: auto;
+    width: 100%;
+    padding: 0 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -ms-overflow-style: none;        /* IE and Edge */
+    scrollbar-width: none;           /* Firefox */
+}
+
+/* Chrome, Safari, Edge */
+.container-fluid::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
 }
 
 .sidebar {
-  width: 250px;
-  background-color: #000;
-  color: #fff;
-  padding: 20px;
-  box-sizing: border-box;
+    width: 250px;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
 }
 
 .logo {
-  color: orange;
-  font-size: 24px;
-  margin-bottom: 30px;
+    width: 200px !important;
+}
+
+.logo img {
+    width: 100%;
 }
 
 .nav-links {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
 }
 
 .nav-links li {
-  margin: 20px 0;
+    margin: 20px 0;
 }
 
 .nav-links a {
-  text-decoration: none;
-  color: white;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
 }
 
 .nav-links i {
-  margin-right: 10px;
-  transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 10px;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .nav-links a:hover {
-  color: orange;
+    color: orange;
 }
 
 .nav-links a:hover i {
-  transform: scale(1.2);
-  color: orange;
+    transform: scale(1.2);
+    color: orange;
 }
 
 .tradingview-widget-container {
-  flex: 1;
+    flex: 1;          /* for firefox */
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    padding: 10px;
+}
+
+.tradingview-widget-container.full-width {
+    margin-left: 0;
+}
+
+.active {
+    background: gray;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.navbar {
+    position: sticky !important;
+    top: 0px;
+    z-index: 100;
+    background: white;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: gray;
+    margin: 6px;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #000;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 15px;
+}
+
+.holder {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.vip-level {
+    border: 1px solid gainsboro;
+    width: 30% !important;
+    border-radius: 8px;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.vip-level h1 {
+    font-weight: lighter;
+}
+
+.vip-level p {
+    color: gray;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.show {
+    display: block;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .tradingview-widget-container {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .holder {
+        flex-direction: column;
+    }
+
+    .vip-level {
+        width: 90% !important;
+        margin: 5px auto;
+    }
+
+    #tradingview_chart {
+        height: 60vh !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 10px 15px;
+    }
+
+    .navbar h2 {
+        font-size: 1.5rem;
+    }
+
+    .vip-level h4 {
+        font-size: 1rem;
+    }
+
+    .vip-level h1 {
+        font-size: 1.5rem;
+    }
+
+    .menu-toggle {
+        margin-right: 10px;
+    }
 }
