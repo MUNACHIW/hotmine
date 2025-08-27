@@ -241,3 +241,68 @@ body::-webkit-scrollbar {
         margin-right: 10px;
     }
 }
+.userdetails{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background: rgb(250, 249, 249);
+}
+.userdetails form{
+    width: 70%;
+    border: 1px solid gainsboro;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fff;
+    margin-left: 10px;
+}
+.userdetails form div{
+    margin-top: 4px;
+}
+.userdetails .walletdetails{
+    width: 30%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.userdetails .walletdetails h2{
+    width: 90% ;
+    font-weight: bold;
+    font-size: 20px;
+}
+.userdetails .walletdetails  .box{
+  background: white;
+  border: 1px solid gainsboro;
+  width: 90%;
+  border-radius: 8px;
+}
+.userdetails .walletdetails  .box div{
+    margin-top: 4px;
+    margin-left: 10px;
+}
+.userdetails .walletdetails  .box h3{
+    font-weight: bold;
+    margin: 0px !important;
+    font-size: 18px;
+}
+.userdetails .walletdetails  .box p{
+    margin: 0px !important;
+    margin-bottom: 10px !important;
+    font-weight: bold;
+    font-size: 14px;
+    padding-bottom: 4px;
+}
+@media screen and  (max-width:900px) {
+    .userdetails{
+        flex-direction: column;
+    }
+    .userdetails form{
+        width: 90% !important;
+        margin-bottom: 10px;
+    }
+        .userdetails .walletdetails{
+            width: 80%;
+        }
+    .userdetails .walletdetails  .box{
+        width: 100% !important;
+    }
+}

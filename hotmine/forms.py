@@ -122,3 +122,127 @@ class LoginForm(AuthenticationForm):
             except User.DoesNotExist:
                 pass
         return username
+
+
+class UserUpdateForm(forms.ModelForm):
+    """Form for updating user profile information"""
+
+    first_name = forms.CharField(
+        required=True,
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "First Name"}
+        ),
+    )
+    last_name = forms.CharField(
+        required=True,
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Last Name"}
+        ),
+    )
+    phone_number = forms.CharField(
+        max_length=15,
+        required=False,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "+1 801 234 5678"}
+        ),
+        help_text="Enter a valid phone number with country code",
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "name@example.com"}
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "username", "email")
+
+    def __init__(self, *args, **kwargs):
+        # Extract the user instance if provided
+        self.user = kwargs.get("instance")
+        super().__init__(*args, **kwargs)
+
+        # Update widget attributes
+        self.fields["username"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Username"}
+        )
+
+        # If user has a profile, populate phone_number
+        if self.user and hasattr(self.user, "userprofile"):
+            self.fields["phone_number"].initial = self.user.userprofile.phone_number
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        # Check if email is taken by another user (excluding current user)
+        if self.user:
+            existing_user = User.objects.filter(email=email).exclude(pk=self.user.pk)
+            if existing_user.exists():
+                raise ValidationError("A user with this email already exists.")
+        else:
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("A user with this email already exists.")
+        return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        # Check if username is taken by another user (excluding current user)
+        if self.user:
+            existing_user = User.objects.filter(username=username).exclude(
+                pk=self.user.pk
+            )
+            if existing_user.exists():
+                raise ValidationError("A user with this username already exists.")
+        else:
+            if User.objects.filter(username=username).exists():
+                raise ValidationError("A user with this username already exists.")
+        return username
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get("phone_number")
+
+        # If phone number is empty, return it (since it's not required)
+        if not phone_number:
+            return phone_number
+
+        # Remove all spaces and hyphens for validation
+        clean_phone = re.sub(r"[\s\-]", "", phone_number)
+
+        # Pattern for international format (+XXX followed by 10-14 digits)
+        international_pattern = r"^\+\d{1,3}\d{9,13}$"
+
+        # Pattern for local format (starts with 0 and has 10-11 digits total)
+        local_pattern = r"^0\d{9,10}$"
+
+        # Pattern for simple digit format (10-15 digits)
+        simple_pattern = r"^\d{10,15}$"
+
+        if not (
+            re.match(international_pattern, clean_phone)
+            or re.match(local_pattern, clean_phone)
+            or re.match(simple_pattern, clean_phone)
+        ):
+            raise ValidationError(
+                "Enter a valid phone number. Examples: +1 801 234 5678, 08012345678, or 2348012345678"
+            )
+
+        return phone_number
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        # Explicitly set the email field to ensure it's updated
+        user.email = self.cleaned_data.get("email")
+
+        if commit:
+            user.save()
+
+            # Handle UserProfile update/creation
+            phone_number = self.cleaned_data.get("phone_number", "")
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.phone_number = phone_number
+            profile.save()
+
+        return user

@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
-from .forms import SignUpForm, LoginForm
+from .forms import SignUpForm, LoginForm, UserUpdateForm
 from .models import UserProfile
 
 
@@ -82,6 +82,18 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     if request.user.is_authenticated:
-        return render(request, "hotmine/profile.html", {"user": request.user})
+        if request.method == "POST":
+            form = UserUpdateForm(request.POST, instance=request.user)
+            if form.is_valid():
+                form.save()
+                return redirect("profile")
+        else:
+            form = UserUpdateForm(instance=request.user)
+
+        return render(
+            request,
+            "hotmine/profile.html",
+            {"user": request.user, "form": form},
+        )
     else:
         return redirect("login")
