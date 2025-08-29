@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+    <title>Investment Plans | Hotmine</title>
+</head>
+
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="container-fluid">
+        <div class="sidebar" id="sidebar">
+            <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
+            <hr>
+            <ul class="nav-links">
+                <li><a href="/dashboard"><i class="bi bi-house"></i> Dashboard</a></li>
+                <li><a href="/profile"><i class="bi bi-person"></i> User profile</a></li>
+                <li class="active"><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
+                <li><a href="#"><i class="bi bi-folder2-open"></i> My Investment</a></li>
+                <li><a href="#"><i class="bi bi-gear"></i> Buy</a></li>
+                <li><a href="#"><i class="bi bi-box-arrow-right"></i> History</a></li>
+                <li><a href="#"><i class="bi bi-box-arrow-right"></i> Downline</a></li>
+                <li><a href="#"><i class="bi bi-box-arrow-right"></i> Change Password</a></li>
+                <li><a href="#"><i class="bi bi-box-arrow-right"></i> Withdrawal</a></li>
+                <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+
+            </ul>
+        </div>
+        <div class="tradingview-widget-container" id="mainContent">
+            <div class="navbar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+
+                    <h2 class="m-2">Investment Plans</h2>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex align-items-center dashaccount">
+                    <span class="dashaccount"><a href="/profile">Account</a></span>
+                    <span class="dashaccount"><a href="/logout">Log out</a></span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <div class="gridcontainer">
+                <div class="grid-item">
+                    <h1>Conservative Crypto Plan</h1>
+                    <p>Investment Range: $100 – $500 (Low risk: BTC & ETH focus)</p>
+                    <a href="/invest/?plan=Conservative Crypto Plan"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h1>Balanced Growth Plan</h1>
+                    <p>Investment Range: $500 – $5,000 (Mix of BTC, ETH, and mid-cap altcoins)</p>
+                    <a href="/invest/?plan=Balanced Growth Plan"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h1>Aggressive High-Yield Plan</h1>
+                    <p>Investment Range: $5,000+ (High-risk altcoins, DeFi, staking)</p>
+                    <a href="/invest/?plan=Aggressive High-Yield Plan"><button>Invest Now</button></a>
+                </div>
+            </div>
+
+            <div class="gridcontainer">
+                <div class="grid-item">
+                    <h2>Starter Portfolio</h2>
+                    <p>$100 – $500 | Beginner-friendly: 70% BTC, 30% ETH</p>
+                    <a href="/invest/?plan=Starter Portfolio"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>Intermediate Portfolio</h2>
+                    <p>$500 – $5,000 | BTC, ETH, Solana, Cardano</p>
+                    <a href="/invest/?plan=Intermediate Portfolio"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>Advanced Portfolio</h2>
+                    <p>$5,000+ | BTC, ETH, Layer-2 projects, DeFi yield farming</p>
+                    <a href="/invest/?plan=Advanced Portfolio"><button>Invest Now</button></a>
+                </div>
+            </div>
+
+            <div class="gridcontainer">
+                <div class="grid-item">
+                    <h2>HODL Strategy</h2>
+                    <p>Buy & hold for 3–5 years</p>
+                    <a href="/invest/?plan=HODL Strategy"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>Swing Trading Plan</h2>
+                    <p>Medium-term trades (weeks/months)</p>
+                    <a href="/invest/?plan=Swing Trading Plan"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>Day Trading Plan</h2>
+                    <p>Short-term trades (daily)</p>
+                    <a href="/invest/?plan=Day Trading Plan"><button>Invest Now</button></a>
+                </div>
+            </div>
+
+            <div class="gridcontainer">
+                <div class="grid-item">
+                    <h2>Stablecoin Income Plan</h2>
+                    <p>Earn 5–10% APY via staking/lending</p>
+                    <a href="/invest/?plan=Stablecoin Income Plan"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>NFT & Metaverse Plan</h2>
+                    <p>Invest in NFT projects & metaverse tokens</p>
+                    <a href="/invest/?plan=NFT & Metaverse Plan"><button>Invest Now</button></a>
+                </div>
+                <div class="grid-item">
+                    <h2>DeFi Power Plan</h2>
+                    <p>High-yield liquidity pools & governance tokens</p>
+                    <a href="/invest/?plan=DeFi Power Plan"><button>Invest Now</button></a>
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+</body>
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const mainContent = document.getElementById('mainContent');
+
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        } else {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('full-width');
+        }
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    });
+</script>
+<script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+<script id="zsiqscript"
+    src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+    defer></script>
+<script defer>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+            {
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+            },
+            'google_translate_element'
+        );
+    }
+</script>
+<script defer type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+</html>

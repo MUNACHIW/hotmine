@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 from .forms import SignUpForm, LoginForm, UserUpdateForm
-from .models import UserProfile
+from .models import UserProfile, Investment
 
 
 # Create your views here.
@@ -15,6 +15,13 @@ def home(request):
 def dashboard(request):
     if request.user.is_authenticated:
         return render(request, "hotmine/dashboard.html")
+    else:
+        return redirect("login")
+
+
+def package_view(request):
+    if request.user.is_authenticated:
+        return render(request, "hotmine/investmentplans.html")
     else:
         return redirect("login")
 
@@ -97,3 +104,40 @@ def profile_view(request):
         )
     else:
         return redirect("login")
+
+
+def invest_view(request):
+    plans = [
+        "Conservative Crypto Plan",
+        "Balanced Growth Plan",
+        "Aggressive High-Yield Plan",
+        "Starter Portfolio",
+        "Intermediate Portfolio",
+        "Advanced Portfolio",
+        "HODL Strategy",
+        "Swing Trading Plan",
+        "Day Trading Plan",
+        "Stablecoin Income Plan",
+        "NFT & Metaverse Plan",
+        "DeFi Power Plan",
+    ]
+    selected_plan = request.GET.get("plan", "")
+    user = request.user
+
+    if request.method == "POST":
+        plan = request.POST.get("plan")
+        amount = request.POST.get("amount")
+        wallet = request.POST.get("wallet")
+
+        Investment.objects.create(
+            user=user, plan=plan, amount=amount, wallet_address=wallet
+        )
+        return redirect("investment_success")
+
+    return render(
+        request, "hotmine/invest.html", {"plans": plans, "selected_plan": selected_plan}
+    )
+
+
+def investment_success(request):
+    return render(request, "hotmine/success.html")
