@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy | Hotmine</title>
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+</head>
+
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="container-fluid">
+        <div class="sidebar" id="sidebar">
+            <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
+            <hr>
+            <ul class="nav-links">
+                <li><a href="/dashboard"><i class="bi bi-house"></i> Dashboard</a></li>
+                <li><a href="/profile"><i class="bi bi-person"></i> User profile</a></li>
+                <li><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
+                <li><a href="/my-investments"><i class="bi bi-folder2-open"></i> My Investment</a></li>
+                <li class="active"><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
+                <li><a href="#"><i class="bi bi-lock"></i> Change Password</a></li>
+                <li><a href="#"><i class="bi bi-cash"></i> Withdrawal</a></li>
+                <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+
+            </ul>
+        </div>
+        <div class="tradingview-widget-container" id="mainContent">
+            <div class="navbar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+
+                    <h2 class="m-2">Buy Cryptocurrency</h2>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex align-items-center dashaccount">
+                    <span class="dashaccount"><a href="/profile">Account</a></span>
+                    <span class="dashaccount"><a href="/logout">Log out</a></span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <form method="POST" onmouseenter="alert('You have to invest before you buy a cryptocurrency with Us')">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="crypto" class="form-label">Select Cryptocurrency</label>
+                    <select id="crypto" name="crypto" class="form-select">
+                        <option value="bitcoin">Bitcoin</option>
+                        <option value="ethereum">Ethereum</option>
+                        <option value="litecoin">Litecoin</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input type="number" id="amount" name="amount" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="wallet" class="form-label">Wallet Address</label>
+                    <input type="text" id="wallet" name="wallet" class="form-control" required>
+                </div>
+                <button type="submit" disabled class="btn btn-primary " style="cursor: pointer;"
+                    onclick="alert('You have to invest before you buy a cryptocurrency with Us')">Buy</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const mainContent = document.getElementById('mainContent');
+
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        } else {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('full-width');
+        }
+    }
+
+    menuToggle.addEventListener('click', toggleSidebar);
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    });
+    windon.onload = function () {
+        alert("You have to invest before you buy a crytocurrency with Us ")
+    };
+</script>
+<script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+<script id="zsiqscript"
+    src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+    defer></script>
+<script defer>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+            {
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+            },
+            'google_translate_element'
+        );
+    }
+</script>
+<script defer type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+</html>

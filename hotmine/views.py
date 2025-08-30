@@ -141,3 +141,16 @@ def invest_view(request):
 
 def investment_success(request):
     return render(request, "hotmine/success.html")
+
+
+def investment_record(request):
+    user = request.user
+    investments = Investment.objects.filter(user=user)
+    return render(request, "hotmine/myinvestment.html", {"investments": investments})
+
+
+def buy_view(request):
+    if request.method == "POST":
+        # Handle the buy action
+        pass
+    return render(request, "hotmine/buy.html")

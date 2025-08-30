@@ -11,4 +11,6 @@ urlpatterns = [
     path("packages/", views.package_view, name="packages"),
     path("invest/", views.invest_view, name="invest"),
     path("success/", views.investment_success, name="investment_success"),
+    path("my-investments/", views.investment_record, name="my_investments"),
+    path("buy/", views.buy_view, name="buy"),
 ]
