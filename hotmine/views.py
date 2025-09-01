@@ -170,3 +170,10 @@ def buy_view(request):
         # Handle the buy action
         pass
     return render(request, "hotmine/buy.html")
+
+
+def withdraw_view(request):
+    if request.method == "POST":
+        # Handle the withdrawal action
+        pass
+    return render(request, "hotmine/withdrawal.html")

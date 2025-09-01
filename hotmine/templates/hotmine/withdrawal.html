@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Withdrawal - Hotmine</title>
+    <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+    <style>
+        .withdrawal-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .withdrawal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .withdrawal-form {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn-withdrawal {
+            width: 100%;
+            padding: 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+
+        .disabled-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .disabled-notice i {
+            font-size: 2rem;
+            color: #856404;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .balance-label {
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .requirements-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .requirements-title {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .requirements-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirements-list li:last-child {
+            border-bottom: none;
+        }
+
+        .requirements-list i {
+            color: #28a745;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="container-fluid">
+        <div class="sidebar" id="sidebar">
+            <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
+            <hr>
+            <ul class="nav-links">
+                <li><a href="/dashboard"><i class="bi bi-house"></i> Dashboard</a></li>
+                <li><a href="/profile"><i class="bi bi-person"></i> User profile</a></li>
+                <li><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
+                <li><a href="/my-investments"><i class="bi bi-folder2-open"></i> My Investment</a></li>
+                <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
+                <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
+                <li class="active"><a href="#"><i class="bi bi-cash"></i> Withdrawal</a></li>
+                <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="tradingview-widget-container" id="mainContent">
+            <div class="navbar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <h2 class="m-2">Withdrawal</h2>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex align-items-center dashaccount">
+                    <span class="dashaccount"><a href="/profile">Account</a></span>
+                    <span class="dashaccount"><a href="/logout">Log out</a></span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            <div class="withdrawal-container">
+                <!-- Balance Display -->
+                <div class="balance-card">
+                    <p class="balance-label">Available Balance</p>
+                    <h1 class="balance-amount">$0.00</h1>
+                </div>
+
+                <!-- Disabled Notice -->
+                <div class="disabled-notice">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h4>Withdrawal Currently Disabled</h4>
+                    <p class="mb-0">Withdrawal functionality is temporarily disabled. Please contact support for
+                        assistance or check back later.</p>
+                </div>
+
+                <!-- Withdrawal Form (Disabled) -->
+                <div class="withdrawal-header">
+                    <h3><i class="bi bi-cash-stack"></i> Request Withdrawal</h3>
+                    <p class="text-muted">Submit a withdrawal request for your earnings</p>
+                </div>
+
+                <form class="withdrawal-form">
+                    <div class="form-group">
+                        <label class="form-label" for="withdrawalAmount">
+                            <i class="bi bi-currency-dollar"></i> Withdrawal Amount
+                        </label>
+                        <input type="number" id="withdrawalAmount" class="form-control"
+                            placeholder="Enter amount to withdraw" step="0.01" min="0" disabled>
+                        <small class="text-muted">Minimum withdrawal: $50.00</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="withdrawalMethod">
+                            <i class="bi bi-credit-card"></i> Withdrawal Method
+                        </label>
+                        <select id="withdrawalMethod" class="form-control" disabled>
+                            <option value="">Select withdrawal method</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="crypto">Cryptocurrency</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="accountDetails">
+                            <i class="bi bi-bank"></i> Account Details
+                        </label>
+                        <textarea id="accountDetails" class="form-control" rows="3"
+                            placeholder="Enter your account details (bank account, PayPal email, crypto wallet address, etc.)"
+                            disabled></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="withdrawalNote">
+                            <i class="bi bi-chat-text"></i> Additional Notes (Optional)
+                        </label>
+                        <textarea id="withdrawalNote" class="form-control" rows="2"
+                            placeholder="Any additional information or special instructions" disabled></textarea>
+                    </div>
+
+                    <button type="button" class="btn-withdrawal" disabled>
+                        <i class="bi bi-x-circle"></i> Withdrawal Disabled
+                    </button>
+                </form>
+
+                <!-- Requirements Card -->
+                <div class="requirements-card">
+                    <h5 class="requirements-title">
+                        <i class="bi bi-info-circle"></i> Withdrawal Requirements
+                    </h5>
+                    <ul class="requirements-list">
+                        <li>
+                            <i class="bi bi-check-circle"></i>
+                            Minimum withdrawal amount: $50.00
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle"></i>
+                            Minimum VIP Grade 3 required
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle"></i>
+                            Processing time: 1 days
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle"></i>
+                            Valid payment method
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full-width');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        // Disabled withdrawal form handling
+        document.addEventListener('DOMContentLoaded', function () {
+            const withdrawalForm = document.querySelector('.withdrawal-form');
+            const formElements = withdrawalForm.querySelectorAll('input, select, textarea, button');
+
+            formElements.forEach(element => {
+                element.disabled = true;
+            });
+
+            // Show alert when trying to interact with disabled form
+            withdrawalForm.addEventListener('click', function (e) {
+                e.preventDefault();
+                alert('Withdrawal functionality is currently disabled. Please contact support for assistance.');
+            });
+        });
+    </script>
+
+    <!-- Google Translate Script -->
+    <script defer type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+
+    <!-- Zoho SalesIQ Script -->
+    <script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+    <script id="zsiqscript"
+        src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+        defer></script>
+</body>
+
+</html>
