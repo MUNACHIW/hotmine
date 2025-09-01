@@ -246,3 +246,64 @@ class UserUpdateForm(forms.ModelForm):
             profile.save()
 
         return user
+
+
+class PasswordUpdateForm(forms.Form):
+    """Separate form for password updates"""
+
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Current Password"}
+        ),
+        help_text="Enter your current password",
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "New Password"}
+        ),
+        help_text="Your password must contain at least 8 characters.",
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Confirm New Password"}
+        ),
+        help_text="Enter the same password as before, for verification.",
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        current_password = self.cleaned_data.get("current_password")
+        if not self.user.check_password(current_password):
+            raise ValidationError("Your current password is incorrect.")
+        return current_password
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get("new_password1")
+        password2 = self.cleaned_data.get("new_password2")
+
+        if password1 and password2:
+            if password1 != password2:
+                raise ValidationError("The two password fields didn't match.")
+        return password2
+
+    def clean_new_password1(self):
+        password = self.cleaned_data.get("new_password1")
+
+        # Basic password validation
+        if len(password) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+
+        # You can add more password validation rules here
+        # For example, checking for numbers, special characters, etc.
+
+        return password
+
+    def save(self, commit=True):
+        password = self.cleaned_data.get("new_password1")
+        self.user.set_password(password)
+        if commit:
+            self.user.save()
+        return self.user

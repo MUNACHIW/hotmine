@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
-from .forms import SignUpForm, LoginForm, UserUpdateForm
+from .forms import SignUpForm, LoginForm, UserUpdateForm, PasswordUpdateForm
 from .models import UserProfile, Investment
 
 
@@ -104,6 +104,22 @@ def profile_view(request):
         )
     else:
         return redirect("login")
+
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = PasswordUpdateForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            # Important: Update session to prevent logout
+            from django.contrib.auth import update_session_auth_hash
+
+            update_session_auth_hash(request, form.user)
+            return redirect("dashboard")
+    else:
+        form = PasswordUpdateForm(request.user)
+    return render(request, "hotmine/password.html", {"form": form})
 
 
 def invest_view(request):
