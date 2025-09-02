@@ -29,18 +29,28 @@
             <div id="google_translate_element"></div>
             <nav class="nav d-flex align-items-center">
                 <ul class="nav-links d-flex align-items-center" style="width: 100%;">
-                    <li class="mx-3"><a href="" class="active">Home</a></li>
-                    <li class="mx-3"><a href="">About Us</a></li>
-                    <li class="mx-3"><a href="">Our Services</a></li>
-                    <li class="mx-3"><a href="">How it Works</a></li>
-                    <li class="mx-3"><a href="">Academy</a></li>
-                    <div class="dropdown">
-                        <a class="dropstyle dropdown-toggle" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Legal
-                        </a>
-                    </div>
-                    <li class="mx-3"><a href="">Contact Us</a></li>
+                    <li class="mx-3"><a href="" id="home" class="active">Home</a></li>
+                    <li class="mx-3"><a href="#about"
+                            onclick="document.getElementById('home').classList.remove('active'); this.classList.add('active');"
+                            id="aboutus">About
+                            Us</a></li>
+                    <li class="mx-3"><a href="#service"
+                            onclick="document.getElementById('aboutus').classList.remove('active'); this.classList.add('active');"
+                            id="services">Our
+                            Services</a></li>
+                    <li class="mx-3"><a href="#New_to_forex"
+                            onclick="document.getElementById('services').classList.remove('active'); this.classList.add('active');"
+                            id="academy">New To Forex</a>
+                    </li>
+                    <li class="mx-3"><a href="#howitwork"
+                            onclick="document.getElementById('academy').classList.remove('active'); this.classList.add('active');"
+                            id="howitworks">How
+                            it Works</a></li>
+
+
+                    <li class="mx-3"><a href="#contact"
+                            onclick="document.getElementById('howitworks').classList.remove('active'); this.classList.add('active');">Contact
+                            Us</a></li>
                     <div class="login-button">
                         <a href="/login">Login</a>
                     </div>
@@ -71,26 +81,32 @@
 
     <!-- Mobile Navigation Box - Slides from top -->
     <div class="mobile-nav-box" id="mobileNavBox">
-        <ul class="nav-links">
-            <li><a href="" class="active">Home</a></li>
-            <li><a href="">About Us</a></li>
-            <li><a href="">Our Services</a></li>
-            <li><a href="">How it Works</a></li>
-            <li><a href="">Academy</a></li>
-            <div class="dropdown">
-                <a class="dropstyle" role="button" onclick="toggleMobileDropdown(this)">
-                    Legal
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Terms of Service</a></li>
-                    <li><a class="dropdown-item" href="#">FAQs</a></li>
-                </ul>
-            </div>
-            <li><a href="">Contact Us</a></li>
-            <div class="login-button">
-                <a href="/login">Login</a>
-            </div>
-        </ul>
+        <li class="mx-3"><a href="" id="home" class="active">Home</a></li>
+        <li class="mx-3"><a href="#about"
+                onclick="document.getElementById('home').classList.remove('active'); this.classList.add('active');"
+                id="aboutus">About
+                Us</a></li>
+        <li class="mx-3"><a href="#service"
+                onclick="document.getElementById('aboutus').classList.remove('active'); this.classList.add('active');"
+                id="services">Our
+                Services</a></li>
+        <li class="mx-3"><a href="#New_to_forex"
+                onclick="document.getElementById('services').classList.remove('active'); this.classList.add('active');"
+                id="academy">New To Forex</a>
+        </li>
+        <li class="mx-3"><a href="#howitwork"
+                onclick="document.getElementById('academy').classList.remove('active'); this.classList.add('active');"
+                id="howitworks">How
+                it Works</a></li>
+
+
+        <li class="mx-3"><a href="#contact"
+                onclick="document.getElementById('howitworks').classList.remove('active'); this.classList.add('active');">Contact
+                Us</a></li>
+    </div>
+
+    </div>
+    </ul>
     </div>
 
     <!-- Main Content -->

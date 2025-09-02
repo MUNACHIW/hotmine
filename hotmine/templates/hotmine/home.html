@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="partners">
-    <h1>Executive Partners</h1>
+    <h1 id="about">Executive Partners</h1>
     <marquee direction="right" scrollamount="15">
         <img src="{% static 'hotmine/images/c1.png' %}" width="100px" class="m-4" alt="Partner 1">
         <img src="{% static 'hotmine/images/c2.png' %}" width="100px " class="m-4" alt="Partner 2">
@@ -60,7 +60,7 @@
         <p>Supported Countries</p>
     </div>
 </section>
-<section class="New_To_Forex">
+<section class="New_To_Forex" id="New_to_forex">
     <div class="content">
         <h3>NEW TO FOREX?</h3>
         <h1>WHAT IS FOREX</h1>
@@ -81,7 +81,7 @@
         <img src="{% static 'hotmine/images/01.png' %}" alt="About Hotmine">
     </div>
 </section>
-<section class="d-flex flex-column align-items-center text-center p-4">
+<section id="service" class="d-flex flex-column align-items-center text-center p-4">
     <h1 class="text-white  fw-bold">Trade Top Cryptos (CFD)</h1>
     <p class="text-white">
         Cryptocurrencies available on Hotmine.
@@ -186,7 +186,7 @@
         </section>
     </div>
 </section>
-<section class="d-flex flex-column align-items-center text-center p-4">
+<section id="howitwork" class="d-flex flex-column align-items-center text-center p-4">
     <h1 class="text-white  fw-bold">How it Works</h1>
     <p class="text-white">
         Three easy way to start
@@ -489,7 +489,7 @@
     </div>
 </section>
 <footer>
-    <section class="footer-grid">
+    <section class="footer-grid" id="contact">
         <div>
             <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
             <p>
@@ -500,13 +500,19 @@
             <h2>Menu</h2>
             <section class="border-menu"></section>
             <section class="section">
-                <li><a href="">Home</a></li>
-                <li><a href="">About Us</a></li>
-                <li><a href="">Our Services</a></li>
-                <li><a href="">Academy</a></li>
-                <li><a href="">Terms & Condition</a></li>
-                <li><a href="">Faqs</a></li>
-                <li><a href="">Contact Us</a></li>
+                <li class="mx-3"><a href="" id="home">Home</a></li>
+                <li class="mx-3"><a href="#about">About
+                        Us</a></li>
+                <li class="mx-3"><a href="#service" id="services">Our
+                        Services</a></li>
+                <li class="mx-3"><a href="#New_to_forex" id="academy">New To Forex</a>
+                </li>
+                <li class="mx-3"><a href="#howitwork" id="howitworks">How
+                        it Works</a></li>
+
+
+                <li class="mx-3"><a href="#contact">Contact
+                        Us</a></li>
             </section>
         </div>
         <div>
