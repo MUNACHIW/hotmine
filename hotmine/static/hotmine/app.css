@@ -217,7 +217,7 @@ html[lang="ur"] {
 .mobile-nav-box {
     position: fixed;
     top: -300%;
-    left: 15%;
+    left: 5% !important;
     width: 90%;
     border-radius: 10px;
     max-width: 100vw;
