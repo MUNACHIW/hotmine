@@ -14,7 +14,8 @@ def home(request):
 
 def dashboard(request):
     if request.user.is_authenticated:
-        return render(request, "hotmine/dashboard.html")
+        user = request.user
+        return render(request, "hotmine/dashboard.html", {"user": user})
     else:
         return redirect("login")
 

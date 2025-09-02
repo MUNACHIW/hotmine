@@ -6,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard </title>
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
     <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
     <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
@@ -80,10 +81,20 @@
                     <h1 class="fw-bold">$0</h1>
                 </div>
             </section>
+            <div class="m-4">
+                <h4>Referal Link</h4>
+                <a class="referal" style="border:1px solid black; padding:10px; text-decoration:none;"
+                    href="">https://hotmine.ai/{{user.username}}</a>
+                <button class="colorbtn" type="button" id="copy-wallet" onclick="copyWalletAddress()">
+                    <i class="bi bi-clipboard"></i> Copy Address
+                </button>
+            </div>
 
             <div id="tradingview_chart" style="height:80vh;width:95%;padding:10px ;">
 
-                <div class="grid"></div>
+                <div class="grid">
+
+                </div>
 
             </div>
         </div>
@@ -104,7 +115,29 @@
                 mainContent.classList.toggle('full-width');
             }
         }
+        function copyWalletAddress() {
+            // Get the referral link text
+            const referralLink = document.querySelector('.referal');
+            const linkText = referralLink.textContent || referralLink.innerText;
 
+            // Copy to clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(linkText).then(() => {
+                    console.log('Copied successfully');
+                    alert('Referral link copied to clipboard!');
+                }).catch(err => {
+                    console.error('Copy failed: ', err);
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = linkText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+        }
         menuToggle.addEventListener('click', toggleSidebar);
 
         overlay.addEventListener('click', () => {
