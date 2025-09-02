@@ -34,7 +34,7 @@ header .container-fluid {
     align-items: center !important;
     position: fixed !important;
     top: 0px !important;
-    z-index: 200;
+    z-index: 2000;
     box-sizing: border-box;
 }
 .depocolor{
@@ -217,8 +217,9 @@ html[lang="ur"] {
 .mobile-nav-box {
     position: fixed;
     top: -300%;
-    left: 0;
+    left: 15%;
     width: 70%;
+    border-radius: 10px;
     max-width: 100vw;
     background: white;
     -webkit-backdrop-filter: blur(20px);
@@ -323,37 +324,35 @@ html[lang="ur"] {
     top: 0;
 }
 
-.mobile-nav-box .nav-links {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+.mobile-nav-box .navholder {
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0px !important;
+    height: 100% !important;
 }
 
-.mobile-nav-box .nav-links li {
+.mobile-nav-box .navholder li {
     display: block !important;
-    margin: 0;
     width: 100%;
-    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: left;
     border-bottom: 1px solid rgba(255, 208, 7, 0.1);
 }
 
-.mobile-nav-box .nav-links li a {
+.mobile-nav-box .navholder li a {
     display: block;
-    padding: 20px;
-    color: white;
+    color:black !important;
     text-decoration: none;
     font-size: 16px;
     transition: all 0.3s ease;
     width: 100%;
 }
 
-.mobile-nav-box .nav-links li a:hover,
-.mobile-nav-box .nav-links li a.active {
-    color: #FFD007;
+.mobile-nav-box .navholder li a:hover,
+.mobile-nav-box .navholder li a.active {
+    color: #FFD007 !important;
     background: rgba(255, 208, 7, 0.1);
 }
 
