@@ -30,7 +30,10 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # Updated for deployment
-ALLOWED_HOSTS = ["*"]  # For development/demo. In production, specify your domain
+ALLOWED_HOSTS = [
+    "hotmine.org.uk",
+    "www.hotmine.org.uk",
+]  # For development/demo. In production, specify your domain
 
 
 # Application definition
