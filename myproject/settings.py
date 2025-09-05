@@ -32,8 +32,8 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 # Updated for deployment
 ALLOWED_HOSTS = [
     "hotmine.org.uk",
-    "https:www.hotmine.org.uk",
-    "https://hotmine.onrender.com",
+    "www.hotmine.org.uk",
+    "hotmine.onrender.com",
 ]  # For development/demo. In production, specify your domain
 
 
