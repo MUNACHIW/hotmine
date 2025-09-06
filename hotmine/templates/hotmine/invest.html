@@ -48,37 +48,6 @@
             <h2 style="font-size: 18px;">Send Crypto To the wallet address Below to Invest</h2>
 
             <!-- Selected Plan Information -->
-            {% if selected_plan %}
-            <div class="plan-info-card mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>{{ selected_plan.title }}</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Investment Range:</strong> {{ selected_plan.investment_range_display }}</p>
-                                <p><strong>Daily Earnings:</strong> {{ selected_plan.daily_earnings_percentage }}%</p>
-                                <p><strong>Duration:</strong> {{ selected_plan.investment_duration_days }} days</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Total Return:</strong> {{ selected_plan.total_return_percentage }}%</p>
-                                <p><strong>Crypto Type:</strong> {{ selected_plan.crypto_wallet.get_wallet_type_display
-                                    }}</p>
-                                <p><strong>Deposit Return:</strong>
-                                    {% if selected_plan.deposit_return %}
-                                    <span class="text-success">✓ Yes</span>
-                                    {% else %}
-                                    <span class="text-danger">✗ No</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                        <p><strong>Description:</strong> {{ selected_plan.description }}</p>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
 
             <section class="userdetails">
                 <form method="POST" action="{% url 'invest' %}" id="investmentForm">
