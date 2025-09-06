@@ -89,7 +89,7 @@ class InvestmentPlanAdmin(admin.ModelAdmin):
     )
 
     def investment_range_display_admin(self, obj):
-        return obj.investment_range_display
+        return obj.investment_range_display or "N/A"
 
     investment_range_display_admin.short_description = "Investment Range"
 
@@ -101,6 +101,8 @@ class InvestmentPlanAdmin(admin.ModelAdmin):
     deposit_return_display.short_description = "Deposit Return"
 
     def estimated_total_return_display(self, obj):
+        if obj.estimated_total_return is None:
+            return "N/A"
         return f"${obj.estimated_total_return:,.2f}"
 
     estimated_total_return_display.short_description = (
