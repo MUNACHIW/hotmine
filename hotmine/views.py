@@ -17,21 +17,9 @@ def dashboard(request):
     if request.user.is_authenticated:
         user = request.user
         # Get user's investments
-        user_investments = Investment.objects.filter(user=user).order_by(
-            "-date_invested"
-        )[:5]
-
-        # Calculate total invested and earnings
-        total_invested = sum(inv.amount for inv in user_investments)
-        total_earnings = sum(inv.total_earnings for inv in user_investments)
-        active_investments = user_investments.filter(status="ACTIVE").count()
 
         context = {
             "user": user,
-            "recent_investments": user_investments,
-            "total_invested": total_invested,
-            "total_earnings": total_earnings,
-            "active_investments": active_investments,
         }
         return render(request, "hotmine/dashboard.html", context)
     else:
