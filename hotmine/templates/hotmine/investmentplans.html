@@ -53,9 +53,6 @@
                 <div class="grid-item">
                     <div class="plan-header">
                         <h2>{{ plan.title }}</h2>
-                        <span class="risk-badge risk-{{ plan.risk_level|lower }}">
-                            {{ plan.get_risk_level_display }}
-                        </span>
                     </div>
 
                     <div class="plan-details">
@@ -76,8 +73,6 @@
                     </div>
 
                     <div class="plan-footer">
-                        <small class="text-muted">Min. ${plan.minimum_deposit} • Est. Return:
-                            ${plan.estimated_total_return|floatformat:0}</small>
                         <a href="/invest/?plan_id={{ plan.id }}" class="btn btn-primary invest-btn">
                             <i class="bi bi-graph-up-arrow"></i> Invest Now
                         </a>
@@ -112,29 +107,6 @@
             margin: 0;
             font-size: 1.25rem;
             line-height: 1.2;
-        }
-
-        .risk-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .risk-low {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .risk-medium {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .risk-high {
-            background-color: #f8d7da;
-            color: #721c24;
         }
 
         .plan-details {
