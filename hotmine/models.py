@@ -110,7 +110,7 @@ class InvestmentPlan(models.Model):
     def investment_range_display(self):
         if self.minimum_deposit is None:
             return "N/A"
-        if self.maximum_deposit:
+        if self.maximum_deposit is not None:
             return f"${self.minimum_deposit:,.0f} - ${self.maximum_deposit:,.0f}"
         return f"${self.minimum_deposit:,.0f}+"
 

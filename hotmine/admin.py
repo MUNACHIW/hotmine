@@ -265,6 +265,6 @@ class InvestmentAdmin(admin.ModelAdmin):
 
 
 # Customize admin site headers
-admin.site.site_header = "Hotmine Crypto Investment Admin"
+admin.site.site_header = "HotmineAdmin"
 admin.site.site_title = "Hotmine Admin"
-admin.site.index_title = "Welcome to Hotmine Administration"
+admin.site.index_title = "Welcome HotmineAdmin"
