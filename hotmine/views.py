@@ -278,6 +278,10 @@ def buy_view(request):
     return render(request, "hotmine/buy.html")
 
 
+def academey_view(request):
+    return render(request, "hotmine/Academy - Hotmine.mhtml")
+
+
 def withdraw_view(request):
     if request.method == "POST":
         # Handle the withdrawal action
