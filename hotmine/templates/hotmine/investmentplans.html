@@ -26,14 +26,12 @@
                 <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
                 <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
                 <li><a href="/withdraw"><i class="bi bi-cash"></i> Withdrawal</a></li>
-                <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-
+                <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
         <div class="tradingview-widget-container" id="mainContent">
             <div class="navbar d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-
                     <h2 class="m-2">Investment Plans</h2>
                     <div id="google_translate_element"></div>
                 </div>
@@ -45,133 +43,215 @@
                     <i class="bi bi-list"></i>
                 </button>
             </div>
+
+            {% if investment_plans %}
+            {% for plan in investment_plans %}
+            {% if forloop.counter0|divisibleby:3 %}
             <div class="gridcontainer">
+                {% endif %}
+
                 <div class="grid-item">
-                    <h1>Conservative Crypto Plan</h1>
-                    <p>Investment Range: $100 – $500 (Low risk: BTC & ETH focus)</p>
-                    <a href="/invest/?plan=Conservative Crypto Plan"><button>Invest Now</button></a>
+                    <div class="plan-header">
+                        <h2>{{ plan.title }}</h2>
+                        <span class="risk-badge risk-{{ plan.risk_level|lower }}">
+                            {{ plan.get_risk_level_display }}
+                        </span>
+                    </div>
+
+                    <div class="plan-details">
+                        <p><strong>Investment Range:</strong> {{ plan.investment_range_display }}</p>
+                        <p><strong>Daily Earnings:</strong> {{ plan.daily_earnings_percentage }}%</p>
+                        <p><strong>Duration:</strong> {{ plan.investment_duration_days }} days</p>
+                        <p><strong>Total Return:</strong> {{ plan.total_return_percentage }}%</p>
+                        {% if plan.deposit_return %}
+                        <p><strong>Deposit Return:</strong> <span class="text-success">✓ Yes</span></p>
+                        {% else %}
+                        <p><strong>Deposit Return:</strong> <span class="text-danger">✗ No</span></p>
+                        {% endif %}
+                        <p><strong>Crypto:</strong> {{ plan.crypto_wallet.get_wallet_type_display }}</p>
+                    </div>
+
+                    <div class="plan-description">
+                        <p>{{ plan.description|truncatewords:15 }}</p>
+                    </div>
+
+                    <div class="plan-footer">
+                        <small class="text-muted">Min. ${plan.minimum_deposit} • Est. Return:
+                            ${plan.estimated_total_return|floatformat:0}</small>
+                        <a href="/invest/?plan_id={{ plan.id }}" class="btn btn-primary invest-btn">
+                            <i class="bi bi-graph-up-arrow"></i> Invest Now
+                        </a>
+                    </div>
                 </div>
-                <div class="grid-item">
-                    <h1>Balanced Growth Plan</h1>
-                    <p>Investment Range: $500 – $5,000 (Mix of BTC, ETH, and mid-cap altcoins)</p>
-                    <a href="/invest/?plan=Balanced Growth Plan"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h1>Aggressive High-Yield Plan</h1>
-                    <p>Investment Range: $5,000+ (High-risk altcoins, DeFi, staking)</p>
-                    <a href="/invest/?plan=Aggressive High-Yield Plan"><button>Invest Now</button></a>
+
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <div class="no-plans">
+                <div class="text-center p-5">
+                    <i class="bi bi-exclamation-circle" style="font-size: 3rem; color: #6c757d;"></i>
+                    <h3 class="mt-3">No Investment Plans Available</h3>
+                    <p class="text-muted">Please check back later for available investment opportunities.</p>
                 </div>
             </div>
-
-            <div class="gridcontainer">
-                <div class="grid-item">
-                    <h2>Starter Portfolio</h2>
-                    <p>$100 – $500 | Beginner-friendly: 70% BTC, 30% ETH</p>
-                    <a href="/invest/?plan=Starter Portfolio"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>Intermediate Portfolio</h2>
-                    <p>$500 – $5,000 | BTC, ETH, Solana, Cardano</p>
-                    <a href="/invest/?plan=Intermediate Portfolio"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>Advanced Portfolio</h2>
-                    <p>$5,000+ | BTC, ETH, Layer-2 projects, DeFi yield farming</p>
-                    <a href="/invest/?plan=Advanced Portfolio"><button>Invest Now</button></a>
-                </div>
-            </div>
-
-            <div class="gridcontainer">
-                <div class="grid-item">
-                    <h2>HODL Strategy</h2>
-                    <p>Buy & hold for 3–5 years</p>
-                    <a href="/invest/?plan=HODL Strategy"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>Swing Trading Plan</h2>
-                    <p>Medium-term trades (weeks/months)</p>
-                    <a href="/invest/?plan=Swing Trading Plan"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>Day Trading Plan</h2>
-                    <p>Short-term trades (daily)</p>
-                    <a href="/invest/?plan=Day Trading Plan"><button>Invest Now</button></a>
-                </div>
-            </div>
-
-            <div class="gridcontainer">
-                <div class="grid-item">
-                    <h2>Stablecoin Income Plan</h2>
-                    <p>Earn 5–10% APY via staking/lending</p>
-                    <a href="/invest/?plan=Stablecoin Income Plan"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>NFT & Metaverse Plan</h2>
-                    <p>Invest in NFT projects & metaverse tokens</p>
-                    <a href="/invest/?plan=NFT & Metaverse Plan"><button>Invest Now</button></a>
-                </div>
-                <div class="grid-item">
-                    <h2>DeFi Power Plan</h2>
-                    <p>High-yield liquidity pools & governance tokens</p>
-                    <a href="/invest/?plan=DeFi Power Plan"><button>Invest Now</button></a>
-                </div>
-            </div>
-
-
-
+            {% endif %}
         </div>
-
-
-
     </div>
-</body>
-<script>
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const mainContent = document.getElementById('mainContent');
 
-    function toggleSidebar() {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
-        } else {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('full-width');
+    <style>
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
         }
-    }
 
-    menuToggle.addEventListener('click', toggleSidebar);
+        .plan-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            line-height: 1.2;
+        }
 
-    overlay.addEventListener('click', () => {
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-    });
+        .risk-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
+        .risk-low {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .risk-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .risk-high {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .plan-details {
+            margin-bottom: 15px;
+        }
+
+        .plan-details p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .plan-description {
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+
+        .plan-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .invest-btn {
+            width: 100%;
+            padding: 10px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .invest-btn:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s;
+        }
+
+        .no-plans {
+            grid-column: 1 / -1;
+            margin: 50px 0;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .grid-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full-width');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+
+        overlay.addEventListener('click', () => {
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
-        }
-    });
-</script>
-<script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
-<script id="zsiqscript"
-    src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
-    defer></script>
-<script defer>
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-            {
-                pageLanguage: 'en',
-                includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
-            },
-            'google_translate_element'
-        );
-    }
-</script>
-<script defer type="text/javascript"
-    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        });
 
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+    </script>
+
+    <script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+    <script id="zsiqscript"
+        src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+        defer></script>
+    <script defer>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script defer type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
 
 </html>

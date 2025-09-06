@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
+from django.http import JsonResponse
+from django.core.paginator import Paginator
 from .forms import SignUpForm, LoginForm, UserUpdateForm, PasswordUpdateForm
-from .models import UserProfile, Investment
+from .models import UserProfile, Investment, InvestmentPlan, CryptoWallet
 
 
-# Create your views here.
 def home(request):
     return render(request, "hotmine/home.html")
 
@@ -15,14 +16,37 @@ def home(request):
 def dashboard(request):
     if request.user.is_authenticated:
         user = request.user
-        return render(request, "hotmine/dashboard.html", {"user": user})
+        # Get user's investments
+        user_investments = Investment.objects.filter(user=user).order_by(
+            "-date_invested"
+        )[:5]
+
+        # Calculate total invested and earnings
+        total_invested = sum(inv.amount for inv in user_investments)
+        total_earnings = sum(inv.total_earnings for inv in user_investments)
+        active_investments = user_investments.filter(status="ACTIVE").count()
+
+        context = {
+            "user": user,
+            "recent_investments": user_investments,
+            "total_invested": total_invested,
+            "total_earnings": total_earnings,
+            "active_investments": active_investments,
+        }
+        return render(request, "hotmine/dashboard.html", context)
     else:
         return redirect("login")
 
 
 def package_view(request):
     if request.user.is_authenticated:
-        return render(request, "hotmine/investmentplans.html")
+        # Get all active investment plans ordered by sort_order
+        investment_plans = InvestmentPlan.objects.filter(is_active=True).order_by(
+            "sort_order", "title"
+        )
+
+        context = {"investment_plans": investment_plans}
+        return render(request, "hotmine/investmentplans.html", context)
     else:
         return redirect("login")
 
@@ -89,22 +113,20 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form = UserUpdateForm(request.POST, instance=request.user)
-            if form.is_valid():
-                form.save()
-                return redirect("profile")
-        else:
-            form = UserUpdateForm(instance=request.user)
-
-        return render(
-            request,
-            "hotmine/profile.html",
-            {"user": request.user, "form": form},
-        )
+    if request.method == "POST":
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile")
     else:
-        return redirect("login")
+        form = UserUpdateForm(instance=request.user)
+
+    return render(
+        request,
+        "hotmine/profile.html",
+        {"user": request.user, "form": form},
+    )
 
 
 @login_required
@@ -117,53 +139,148 @@ def change_password(request):
             from django.contrib.auth import update_session_auth_hash
 
             update_session_auth_hash(request, form.user)
+            messages.success(request, "Password updated successfully!")
             return redirect("dashboard")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = PasswordUpdateForm(request.user)
     return render(request, "hotmine/password.html", {"form": form})
 
 
+@login_required
 def invest_view(request):
-    plans = [
-        "Conservative Crypto Plan",
-        "Balanced Growth Plan",
-        "Aggressive High-Yield Plan",
-        "Starter Portfolio",
-        "Intermediate Portfolio",
-        "Advanced Portfolio",
-        "HODL Strategy",
-        "Swing Trading Plan",
-        "Day Trading Plan",
-        "Stablecoin Income Plan",
-        "NFT & Metaverse Plan",
-        "DeFi Power Plan",
-    ]
-    selected_plan = request.GET.get("plan", "")
-    user = request.user
+    # Get all active investment plans
+    plans = InvestmentPlan.objects.filter(is_active=True).order_by(
+        "sort_order", "title"
+    )
+    selected_plan_id = request.GET.get("plan_id", "")
+    selected_plan = None
+
+    if selected_plan_id:
+        try:
+            selected_plan = InvestmentPlan.objects.get(
+                id=selected_plan_id, is_active=True
+            )
+        except InvestmentPlan.DoesNotExist:
+            pass
 
     if request.method == "POST":
-        plan = request.POST.get("plan")
+        plan_id = request.POST.get("plan_id")
         amount = request.POST.get("amount")
-        wallet = request.POST.get("wallet")
 
-        Investment.objects.create(
-            user=user, plan=plan, amount=amount, wallet_address=wallet
+        try:
+            investment_plan = InvestmentPlan.objects.get(id=plan_id, is_active=True)
+            amount = float(amount)
+
+            # Validate investment amount
+            if amount < investment_plan.minimum_deposit:
+                messages.error(
+                    request,
+                    f"Minimum investment for {investment_plan.title} is ${investment_plan.minimum_deposit}",
+                )
+                return redirect(f"/invest/?plan_id={plan_id}")
+
+            if (
+                investment_plan.maximum_deposit
+                and amount > investment_plan.maximum_deposit
+            ):
+                messages.error(
+                    request,
+                    f"Maximum investment for {investment_plan.title} is ${investment_plan.maximum_deposit}",
+                )
+                return redirect(f"/invest/?plan_id={plan_id}")
+
+            # Create investment record
+            Investment.objects.create(
+                user=request.user,
+                investment_plan=investment_plan,
+                amount=amount,
+                wallet_address_used=investment_plan.crypto_wallet.wallet_address,
+                # Legacy fields for compatibility
+                plan=investment_plan.title,
+                wallet_address=investment_plan.crypto_wallet.wallet_address,
+            )
+
+            messages.success(
+                request,
+                f"Investment of ${amount} in {investment_plan.title} submitted successfully!",
+            )
+            return redirect("investment_success")
+
+        except InvestmentPlan.DoesNotExist:
+            messages.error(request, "Invalid investment plan selected.")
+        except ValueError:
+            messages.error(request, "Invalid investment amount.")
+        except Exception as e:
+            messages.error(
+                request, "An error occurred while processing your investment."
+            )
+
+    context = {
+        "plans": plans,
+        "selected_plan": selected_plan,
+    }
+    return render(request, "hotmine/invest.html", context)
+
+
+def get_plan_details(request, plan_id):
+    """AJAX endpoint to get plan details"""
+    try:
+        plan = InvestmentPlan.objects.get(id=plan_id, is_active=True)
+        return JsonResponse(
+            {
+                "success": True,
+                "plan": {
+                    "id": plan.id,
+                    "title": plan.title,
+                    "description": plan.description,
+                    "minimum_deposit": float(plan.minimum_deposit),
+                    "maximum_deposit": (
+                        float(plan.maximum_deposit) if plan.maximum_deposit else None
+                    ),
+                    "daily_earnings_percentage": float(plan.daily_earnings_percentage),
+                    "investment_duration_days": plan.investment_duration_days,
+                    "deposit_return": plan.deposit_return,
+                    "wallet_address": plan.crypto_wallet.wallet_address,
+                    "wallet_type": plan.crypto_wallet.get_wallet_type_display(),
+                    "investment_range": plan.investment_range_display,
+                    "total_return_percentage": float(plan.total_return_percentage),
+                },
+            }
         )
-        return redirect("investment_success")
-
-    return render(
-        request, "hotmine/invest.html", {"plans": plans, "selected_plan": selected_plan}
-    )
+    except InvestmentPlan.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Plan not found"})
 
 
 def investment_success(request):
     return render(request, "hotmine/success.html")
 
 
+@login_required
 def investment_record(request):
     user = request.user
-    investments = Investment.objects.filter(user=user)
-    return render(request, "hotmine/myinvestment.html", {"investments": investments})
+    investments_list = Investment.objects.filter(user=user).order_by("-date_invested")
+
+    # Add pagination
+    paginator = Paginator(investments_list, 10)  # Show 10 investments per page
+    page_number = request.GET.get("page")
+    investments = paginator.get_page(page_number)
+
+    # Calculate summary statistics
+    total_invested = sum(inv.amount for inv in investments_list)
+    total_earnings = sum(inv.total_earnings for inv in investments_list)
+    active_count = investments_list.filter(status="ACTIVE").count()
+    completed_count = investments_list.filter(status="COMPLETED").count()
+
+    context = {
+        "investments": investments,
+        "total_invested": total_invested,
+        "total_earnings": total_earnings,
+        "active_count": active_count,
+        "completed_count": completed_count,
+    }
+    return render(request, "hotmine/myinvestment.html", context)
 
 
 def buy_view(request):

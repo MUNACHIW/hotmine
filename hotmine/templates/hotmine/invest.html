@@ -26,18 +26,16 @@
                 <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
                 <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
                 <li><a href="/withdraw"><i class="bi bi-cash"></i> Withdrawal</a></li>
-                <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-
+                <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
+
         <div class="tradingview-widget-container" id="mainContent">
             <div class="navbar d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-
                     <h2 class="m-2">Investment Plans</h2>
                     <div id="google_translate_element"></div>
                 </div>
-
                 <div class="d-flex align-items-center dashaccount">
                     <span class="dashaccount"><a href="/profile">Account</a></span>
                     <span class="dashaccount"><a href="/logout">Log out</a></span>
@@ -46,19 +44,69 @@
                     <i class="bi bi-list"></i>
                 </button>
             </div>
+
             <h2 style="font-size: 18px;">Send Crypto To the wallet address Below to Invest</h2>
+
+            <!-- Selected Plan Information -->
+            {% if selected_plan %}
+            <div class="plan-info-card mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ selected_plan.title }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Investment Range:</strong> {{ selected_plan.investment_range_display }}</p>
+                                <p><strong>Daily Earnings:</strong> {{ selected_plan.daily_earnings_percentage }}%</p>
+                                <p><strong>Duration:</strong> {{ selected_plan.investment_duration_days }} days</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Total Return:</strong> {{ selected_plan.total_return_percentage }}%</p>
+                                <p><strong>Crypto Type:</strong> {{ selected_plan.crypto_wallet.get_wallet_type_display
+                                    }}</p>
+                                <p><strong>Deposit Return:</strong>
+                                    {% if selected_plan.deposit_return %}
+                                    <span class="text-success">✓ Yes</span>
+                                    {% else %}
+                                    <span class="text-danger">✗ No</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <p><strong>Description:</strong> {{ selected_plan.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             <section class="userdetails">
-                <form method="POST" action="{% url 'invest' %}">
+                <form method="POST" action="{% url 'invest' %}" id="investmentForm">
                     {% csrf_token %}
+
                     <label for="plan">Select Plan:</label>
                     <div class="w-100">
-                        <select class="plan" name="plan" id="plan" required>
+                        <select class="plan" name="plan_id" id="plan" required>
                             <option value="">-- Choose a Plan --</option>
                             {% for plan in plans %}
-                            {% if plan == selected_plan %}
-                            <option value="{{ plan }}" selected>{{ plan }}</option>
+                            {% if selected_plan and plan.id == selected_plan.id %}
+                            <option value="{{ plan.id }}" selected data-min="{{ plan.minimum_deposit }}"
+                                data-max="{% if plan.maximum_deposit %}{{ plan.maximum_deposit }}{% endif %}"
+                                data-wallet="{{ plan.crypto_wallet.wallet_address }}"
+                                data-crypto="{{ plan.crypto_wallet.get_wallet_type_display }}"
+                                data-daily="{{ plan.daily_earnings_percentage }}"
+                                data-duration="{{ plan.investment_duration_days }}">
+                                {{ plan.title }}
+                            </option>
                             {% else %}
-                            <option value="{{ plan }}">{{ plan }}</option>
+                            <option value="{{ plan.id }}" data-min="{{ plan.minimum_deposit }}"
+                                data-max="{% if plan.maximum_deposit %}{{ plan.maximum_deposit }}{% endif %}"
+                                data-wallet="{{ plan.crypto_wallet.wallet_address }}"
+                                data-crypto="{{ plan.crypto_wallet.get_wallet_type_display }}"
+                                data-daily="{{ plan.daily_earnings_percentage }}"
+                                data-duration="{{ plan.investment_duration_days }}">
+                                {{ plan.title }}
+                            </option>
                             {% endif %}
                             {% endfor %}
                         </select>
@@ -66,178 +114,395 @@
 
                     <label for="amount">Investment Amount (USD):</label>
                     <div>
-                        <div>
-                            <input class="plan" type="number" name="amount" id="amount" min="100" required><br>
-                            <small id="amount-range">Minimum: $100</small>
+                        <input class="plan" type="number" name="amount" id="amount" min="100" step="0.01" required>
+                        <small id="amount-range">Minimum: $100</small>
+                    </div>
+
+                    <!-- Investment Summary -->
+                    <div id="investment-summary" class="investment-summary" style="display: none;">
+                        <h5>Investment Summary</h5>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="label">Daily Earnings:</span>
+                                <span class="value" id="daily-earnings">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Total Earnings:</span>
+                                <span class="value" id="total-earnings">$0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Total Return:</span>
+                                <span class="value" id="total-return">$0.00</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <div>
-                            <label for="wallet">Wallet Address:</label><br>
-                            <input class="plan" type="text" name="wallet" id="wallet" readonly
+                    <div class="wallet-section">
+                        <label for="wallet">Wallet Address:</label>
+                        <div class="wallet-input-group">
+                            <input class="plan wallet-input" type="text" name="wallet" id="wallet" readonly
                                 placeholder="Select a plan to see wallet address">
+                            <button class="copy-btn" type="button" id="copy-wallet" onclick="copyWalletAddress()"
+                                disabled>
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
                         </div>
-                        <button class="colorbtn" type="button" id="copy-wallet" onclick="copyWalletAddress()" disabled>
-                            <i class="bi bi-clipboard"></i> Copy Address
-                        </button>
+                        <div class="wallet-info">
+                            <small id="crypto-type"></small>
+                        </div>
                     </div>
 
-                    <small id="copy-feedback" style="color: green; display: none;">✓ Wallet address copied!</small>
+                    <small id="copy-feedback" class="copy-feedback" style="display: none;">
+                        <i class="bi bi-check-circle"></i> Wallet address copied!
+                    </small>
 
-                    <script>
-                        const planSelect = document.getElementById('plan');
-                        const walletInput = document.getElementById('wallet');
-                        const copyButton = document.getElementById('copy-wallet');
-                        const copyFeedback = document.getElementById('copy-feedback');
-
-                        const walletAddresses = {
-                            "Conservative Crypto Plan": "bc1qcefxxvxag8xu0gksp0cgtc8cfyve56dclxrvps", // BTC
-                            "Balanced Growth Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // ETH
-                            "Aggressive High-Yield Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // BNB
-                            "Starter Portfolio": "bc1qcefxxvxag8xu0gksp0cgtc8cfyve56dclxrvps", // BTC
-                            "Intermediate Portfolio": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // ETH
-                            "Advanced Portfolio": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // BNB
-                            "HODL Strategy": "bc1qcefxxvxag8xu0gksp0cgtc8cfyve56dclxrvps", // BTC
-                            "Swing Trading Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // ETH
-                            "Day Trading Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // BNB
-                            "Stablecoin Income Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // TRC20
-                            "NFT & Metaverse Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d", // ETH
-                            "DeFi Power Plan": "0x21b999ad1018e273649413a89aeA4598D6273a0d" // ETH
-                        };
-
-                        const investmentRanges = {
-                            "Conservative Crypto Plan": { min: 100, max: 500, text: "$100 - $500" },
-                            "Balanced Growth Plan": { min: 500, max: 5000, text: "$500 - $5,000" },
-                            "Aggressive High-Yield Plan": { min: 5000, max: null, text: "$5,000+" },
-                            "Starter Portfolio": { min: 100, max: 500, text: "$100 - $500" },
-                            "Intermediate Portfolio": { min: 500, max: 5000, text: "$500 - $5,000" },
-                            "Advanced Portfolio": { min: 5000, max: null, text: "$5,000+" },
-                            "HODL Strategy": { min: 100, max: null, text: "$100+" },
-                            "Swing Trading Plan": { min: 100, max: null, text: "$100+" },
-                            "Day Trading Plan": { min: 100, max: null, text: "$100+" },
-                            "Stablecoin Income Plan": { min: 100, max: null, text: "$100+" },
-                            "NFT & Metaverse Plan": { min: 100, max: null, text: "$100+" },
-                            "DeFi Power Plan": { min: 100, max: null, text: "$100+" }
-                        };
-
-
-                        const menuToggle = document.getElementById('menuToggle');
-                        const sidebar = document.getElementById('sidebar');
-                        const overlay = document.getElementById('overlay');
-                        const mainContent = document.getElementById('mainContent');
-
-                        function toggleSidebar() {
-                            if (window.innerWidth <= 768) {
-                                sidebar.classList.toggle('show');
-                                overlay.classList.toggle('show');
-                            } else {
-                                sidebar.classList.toggle('hidden');
-                                mainContent.classList.toggle('full-width');
-                            }
-                        }
-
-                        menuToggle.addEventListener('click', toggleSidebar);
-
-                        overlay.addEventListener('click', () => {
-                            sidebar.classList.remove('show');
-                            overlay.classList.remove('show');
-                        });
-
-                        window.addEventListener('resize', () => {
-                            if (window.innerWidth > 768) {
-                                sidebar.classList.remove('show');
-                                overlay.classList.remove('show');
-                            }
-                        });
-
-                        function copyWalletAddress() {
-                            const walletAddress = walletInput.value;
-                            if (walletAddress && walletAddress !== "") {
-                                navigator.clipboard.writeText(walletAddress).then(() => {
-                                    copyFeedback.style.display = 'block';
-                                    setTimeout(() => {
-                                        copyFeedback.style.display = 'none';
-                                    }, 2000);
-                                }).catch(err => {
-                                    // Fallback for older browsers
-                                    walletInput.select();
-                                    document.execCommand('copy');
-                                    copyFeedback.textContent = '✓ Wallet address copied!';
-                                    copyFeedback.style.display = 'block';
-                                    setTimeout(() => {
-                                        copyFeedback.style.display = 'none';
-                                    }, 2000);
-                                });
-                            }
-                        }
-
-                        planSelect.addEventListener('change', function () {
-                            const selectedPlan = this.value;
-                            const amountInput = document.getElementById('amount');
-                            const amountRange = document.getElementById('amount-range');
-
-                            if (selectedPlan && walletAddresses[selectedPlan]) {
-                                // Update wallet address
-                                walletInput.value = walletAddresses[selectedPlan];
-                                copyButton.disabled = false;
-
-                                // Update investment range
-                                if (investmentRanges[selectedPlan]) {
-                                    const range = investmentRanges[selectedPlan];
-                                    amountInput.min = range.min;
-                                    if (range.max) {
-                                        amountInput.max = range.max;
-                                    } else {
-                                        amountInput.removeAttribute('max');
-                                    }
-                                    amountRange.textContent = `Range: ${range.text}`;
-                                    amountRange.style.color = '#6c757d';
-                                }
-                            } else {
-                                walletInput.value = "";
-                                walletInput.placeholder = "Select a plan to see wallet address";
-                                copyButton.disabled = true;
-                                amountInput.min = 100;
-                                amountInput.removeAttribute('max');
-                                amountRange.textContent = "Minimum: $100";
-                                amountRange.style.color = '#6c757d';
-                            }
-                        });
-
-                        // Validate amount on input
-                        document.getElementById('amount').addEventListener('input', function () {
-                            const selectedPlan = planSelect.value;
-                            const amount = parseFloat(this.value);
-                            const amountRange = document.getElementById('amount-range');
-
-                            if (selectedPlan && investmentRanges[selectedPlan] && amount) {
-                                const range = investmentRanges[selectedPlan];
-                                if (amount < range.min) {
-                                    amountRange.textContent = `⚠️ Minimum for this plan: ${range.min}`;
-                                    amountRange.style.color = '#dc3545';
-                                } else if (range.max && amount > range.max) {
-                                    amountRange.textContent = `⚠️ Maximum for this plan: ${range.max}`;
-                                    amountRange.style.color = '#dc3545';
-                                } else {
-                                    amountRange.textContent = `✓ Valid amount for ${range.text}`;
-                                    amountRange.style.color = '#28a745';
-                                }
-                            }
-                        });
-
-                        // Set wallet address on page load if plan is pre-selected
-                        if (planSelect.value && walletAddresses[planSelect.value]) {
-                            walletInput.value = walletAddresses[planSelect.value];
-                            copyButton.disabled = false;
-                        }
-                    </script>
-
-                    <button class="submitbtn" type="submit">Submit Deposit</button>
+                    <button class="submitbtn" type="submit" id="submitBtn" disabled>
+                        <i class="bi bi-arrow-up-circle"></i> Submit Investment
+                    </button>
                 </form>
             </section>
         </div>
     </div>
+
+    <style>
+        .plan-info-card {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            color: #495057;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .investment-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-item .label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .summary-item .value {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .wallet-section {
+            position: relative;
+        }
+
+        .wallet-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .wallet-input {
+            flex: 1;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .copy-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .wallet-info {
+            margin-top: 5px;
+        }
+
+        .copy-feedback {
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .submitbtn {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .submitbtn:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .submitbtn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wallet-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        const planSelect = document.getElementById('plan');
+        const walletInput = document.getElementById('wallet');
+        const copyButton = document.getElementById('copy-wallet');
+        const copyFeedback = document.getElementById('copy-feedback');
+        const amountInput = document.getElementById('amount');
+        const amountRange = document.getElementById('amount-range');
+        const cryptoType = document.getElementById('crypto-type');
+        const investmentSummary = document.getElementById('investment-summary');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full-width');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        function copyWalletAddress() {
+            const walletAddress = walletInput.value;
+            if (walletAddress && walletAddress !== "") {
+                navigator.clipboard.writeText(walletAddress).then(() => {
+                    showCopyFeedback();
+                }).catch(err => {
+                    // Fallback for older browsers
+                    walletInput.select();
+                    document.execCommand('copy');
+                    showCopyFeedback();
+                });
+            }
+        }
+
+        function showCopyFeedback() {
+            copyFeedback.style.display = 'flex';
+            setTimeout(() => {
+                copyFeedback.style.display = 'none';
+            }, 2000);
+        }
+
+        function updateInvestmentCalculations() {
+            const selectedOption = planSelect.options[planSelect.selectedIndex];
+            const amount = parseFloat(amountInput.value) || 0;
+
+            if (selectedOption.value && amount > 0) {
+                const dailyPercentage = parseFloat(selectedOption.dataset.daily);
+                const duration = parseInt(selectedOption.dataset.duration);
+
+                const dailyEarnings = (dailyPercentage / 100) * amount;
+                const totalEarnings = dailyEarnings * duration;
+                const totalReturn = totalEarnings + amount;
+
+                document.getElementById('daily-earnings').textContent = `$${dailyEarnings.toFixed(2)}`;
+                document.getElementById('total-earnings').textContent = `$${totalEarnings.toFixed(2)}`;
+                document.getElementById('total-return').textContent = `$${totalReturn.toFixed(2)}`;
+
+                investmentSummary.style.display = 'block';
+            } else {
+                investmentSummary.style.display = 'none';
+            }
+        }
+
+        planSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+
+            if (selectedOption.value) {
+                const minAmount = parseFloat(selectedOption.dataset.min);
+                const maxAmount = selectedOption.dataset.max ? parseFloat(selectedOption.dataset.max) : null;
+                const walletAddress = selectedOption.dataset.wallet;
+                const cryptoName = selectedOption.dataset.crypto;
+
+                // Update wallet information
+                walletInput.value = walletAddress;
+                copyButton.disabled = false;
+                cryptoType.textContent = `Send ${cryptoName} to this address`;
+
+                // Update amount constraints
+                amountInput.min = minAmount;
+                if (maxAmount) {
+                    amountInput.max = maxAmount;
+                    amountRange.textContent = `Range: $${minAmount.toLocaleString()} - $${maxAmount.toLocaleString()}`;
+                } else {
+                    amountInput.removeAttribute('max');
+                    amountRange.textContent = `Minimum: $${minAmount.toLocaleString()}`;
+                }
+
+                // Validate current amount
+                validateAmount();
+                updateInvestmentCalculations();
+                updateSubmitButton();
+            } else {
+                // Reset form
+                walletInput.value = "";
+                copyButton.disabled = true;
+                cryptoType.textContent = "";
+                amountInput.min = 100;
+                amountInput.removeAttribute('max');
+                amountRange.textContent = "Minimum: $100";
+                amountRange.style.color = '#6c757d';
+                investmentSummary.style.display = 'none';
+                updateSubmitButton();
+            }
+        });
+
+        function validateAmount() {
+            const selectedOption = planSelect.options[planSelect.selectedIndex];
+            const amount = parseFloat(amountInput.value);
+
+            if (selectedOption.value && amount) {
+                const minAmount = parseFloat(selectedOption.dataset.min);
+                const maxAmount = selectedOption.dataset.max ? parseFloat(selectedOption.dataset.max) : null;
+
+                if (amount < minAmount) {
+                    amountRange.textContent = `⚠️ Minimum: $${minAmount.toLocaleString()}`;
+                    amountRange.style.color = '#dc3545';
+                    return false;
+                } else if (maxAmount && amount > maxAmount) {
+                    amountRange.textContent = `⚠️ Maximum: $${maxAmount.toLocaleString()}`;
+                    amountRange.style.color = '#dc3545';
+                    return false;
+                } else {
+                    amountRange.textContent = `✓ Valid amount`;
+                    amountRange.style.color = '#28a745';
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function updateSubmitButton() {
+            const planSelected = planSelect.value !== '';
+            const amountValid = validateAmount();
+            const walletFilled = walletInput.value !== '';
+
+            submitBtn.disabled = !(planSelected && amountValid && walletFilled);
+        }
+
+        amountInput.addEventListener('input', function () {
+            validateAmount();
+            updateInvestmentCalculations();
+            updateSubmitButton();
+        });
+
+        // Initialize form if plan is pre-selected
+        if (planSelect.value) {
+            planSelect.dispatchEvent(new Event('change'));
+        }
+    </script>
+
+    <script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+    <script id="zsiqscript"
+        src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+        defer></script>
+    <script defer>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script defer type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>
