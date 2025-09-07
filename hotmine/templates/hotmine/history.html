@@ -1,0 +1,32 @@
+<h2>Your Investment History</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date Invested</th>
+            <th>Plan</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Daily Earnings</th>
+            <th>Expected Return</th>
+            <th>Days Remaining</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in investments %}
+        <tr>
+            <td>{{ inv.date_invested|date:"M d, Y" }}</td>
+            <td>{{ inv.investment_plan.title }}</td>
+            <td>${{ inv.amount }}</td>
+            <td>{{ inv.status }}</td>
+            <td>${{ inv.daily_earnings|floatformat:2 }}</td>
+            <td>${{ inv.expected_total_return|floatformat:2 }}</td>
+            <td>{{ inv.days_remaining }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No investments found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

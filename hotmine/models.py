@@ -247,3 +247,41 @@ class Investment(models.Model):
         ordering = ["-date_invested"]
         verbose_name = "Investment"
         verbose_name_plural = "Investments"
+
+
+class Amount(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - ${self.amount}" if self.user else "No User"
+
+
+class Totalearnings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    total_earnings = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (
+            f"{self.user.username} - ${self.total_earnings}" if self.user else "No User"
+        )
+
+
+class totalwithdraw(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    total_withdraw = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (
+            f"{self.user.username} - ${self.total_withdraw}" if self.user else "No User"
+        )

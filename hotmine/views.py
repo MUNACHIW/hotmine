@@ -6,7 +6,15 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from .forms import SignUpForm, LoginForm, UserUpdateForm, PasswordUpdateForm
-from .models import UserProfile, Investment, InvestmentPlan, CryptoWallet
+from .models import (
+    Totalearnings,
+    UserProfile,
+    Investment,
+    InvestmentPlan,
+    CryptoWallet,
+    totalwithdraw,
+    Amount,
+)
 
 
 def home(request):
@@ -14,16 +22,20 @@ def home(request):
 
 
 def dashboard(request):
-    if request.user.is_authenticated:
-        user = request.user
-        # Get user's investments
+    user = request.user
 
-        context = {
-            "user": user,
-        }
-        return render(request, "hotmine/dashboard.html", context)
-    else:
-        return redirect("login")
+    amount_obj = Amount.objects.filter(user=user).first()
+    earnings_obj = Totalearnings.objects.filter(user=user).first()
+    withdraw_obj = totalwithdraw.objects.filter(user=user).first()
+
+    context = {
+        "user": user,
+        "amount": amount_obj.amount if amount_obj else 0,
+        "total_earnings": earnings_obj.total_earnings if earnings_obj else 0,
+        "total_withdraw": withdraw_obj.total_withdraw if withdraw_obj else 0,
+    }
+
+    return render(request, "hotmine/dashboard.html", context)
 
 
 def package_view(request):
@@ -101,39 +113,64 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    user = request.user
+
     if request.method == "POST":
-        form = UserUpdateForm(request.POST, instance=request.user)
+        form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
             return redirect("profile")
     else:
-        form = UserUpdateForm(instance=request.user)
+        form = UserUpdateForm(instance=user)
 
-    return render(
-        request,
-        "hotmine/profile.html",
-        {"user": request.user, "form": form},
-    )
+    # Get financial data
+    amount_obj = Amount.objects.filter(user=user).first()
+    withdraw_obj = totalwithdraw.objects.filter(user=user).first()
+    earnings_obj = Totalearnings.objects.filter(user=user).first()
+    context = {
+        "user": user,
+        "form": form,
+        "amount": amount_obj.amount if amount_obj else 0,
+        "total_earnings": earnings_obj.total_earnings if earnings_obj else 0,
+        "total_withdraw": withdraw_obj.total_withdraw if withdraw_obj else 0,
+    }
+
+    return render(request, "hotmine/profile.html", context)
+
+
+from django.contrib.auth import update_session_auth_hash
 
 
 @login_required
 def change_password(request):
+    user = request.user
+
     if request.method == "POST":
-        form = PasswordUpdateForm(request.user, request.POST)
+        form = PasswordUpdateForm(user, request.POST)
         if form.is_valid():
             form.save()
-            # Important: Update session to prevent logout
-            from django.contrib.auth import update_session_auth_hash
-
-            update_session_auth_hash(request, form.user)
+            update_session_auth_hash(request, form.user)  # Prevent logout
             messages.success(request, "Password updated successfully!")
             return redirect("dashboard")
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        form = PasswordUpdateForm(request.user)
-    return render(request, "hotmine/password.html", {"form": form})
+        form = PasswordUpdateForm(user)
+
+    # Get financial data
+    amount_obj = Amount.objects.filter(user=user).first()
+    withdraw_obj = totalwithdraw.objects.filter(user=user).first()
+    earnings_obj = Totalearnings.objects.filter(user=user).first()
+
+    context = {
+        "form": form,
+        "amount": amount_obj.amount if amount_obj else 0,
+        "total_withdraw": withdraw_obj.total_withdraw if withdraw_obj else 0,
+        "total_earnings": earnings_obj.total_earnings if earnings_obj else 0,
+    }
+
+    return render(request, "hotmine/password.html", context)
 
 
 @login_required
@@ -283,3 +320,12 @@ def withdraw_view(request):
         # Handle the withdrawal action
         pass
     return render(request, "hotmine/withdrawal.html")
+
+
+@login_required
+def investment_history_view(request):
+    user = request.user
+    investments = Investment.objects.filter(user=user).order_by("-date_invested")
+
+    context = {"investments": investments}
+    return render(request, "hotmine/history.html", context)

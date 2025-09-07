@@ -2,7 +2,15 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import UserProfile, Investment, InvestmentPlan, CryptoWallet
+from .models import (
+    UserProfile,
+    Investment,
+    InvestmentPlan,
+    CryptoWallet,
+    Amount,
+    Totalearnings,
+    totalwithdraw,
+)
 
 
 @admin.register(UserProfile)
@@ -264,6 +272,27 @@ class InvestmentAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} investments marked as cancelled.")
 
     mark_as_cancelled.short_description = "Mark selected investments as cancelled"
+
+
+@admin.register(Amount)
+class AmountAdmin(admin.ModelAdmin):
+    list_display = ("user", "amount", "created_at", "updated_at")
+    search_fields = ("user__username",)
+    list_filter = ("created_at", "updated_at")
+
+
+@admin.register(Totalearnings)
+class TotalearningsAdmin(admin.ModelAdmin):
+    list_display = ("user", "total_earnings", "created_at", "updated_at")
+    search_fields = ("user__username",)
+    list_filter = ("created_at", "updated_at")
+
+
+@admin.register(totalwithdraw)
+class TotalWithdrawAdmin(admin.ModelAdmin):
+    list_display = ("user", "total_withdraw", "created_at", "updated_at")
+    search_fields = ("user__username",)
+    list_filter = ("created_at", "updated_at")
 
 
 # Customize admin site headers
