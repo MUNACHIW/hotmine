@@ -1,32 +1,538 @@
-<h2>Your Investment History</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-<table>
-    <thead>
-        <tr>
-            <th>Date Invested</th>
-            <th>Plan</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Daily Earnings</th>
-            <th>Expected Return</th>
-            <th>Days Remaining</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for inv in investments %}
-        <tr>
-            <td>{{ inv.date_invested|date:"M d, Y" }}</td>
-            <td>{{ inv.investment_plan.title }}</td>
-            <td>${{ inv.amount }}</td>
-            <td>{{ inv.status }}</td>
-            <td>${{ inv.daily_earnings|floatformat:2 }}</td>
-            <td>${{ inv.expected_total_return|floatformat:2 }}</td>
-            <td>{{ inv.days_remaining }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="7">No investments found.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'hotmine/images/icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'hotmine/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap-icons/bootstrap-icons.css'%}">
+    <link rel="stylesheet" href="{% static 'hotmine/bootstrap.css' %}">
+    <title>Investment History | Hotmine</title>
+</head>
+
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="container-fluid">
+        <div class="sidebar" id="sidebar">
+            <img class="logo" src="{% static 'hotmine/images/miney.jpg' %}" alt="Hotmine Logo">
+            <hr>
+            <ul class="nav-links">
+                <li><a href="/dashboard"><i class="bi bi-house"></i> Dashboard</a></li>
+                <li><a href="/profile"><i class="bi bi-person"></i> User profile</a></li>
+                <li><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
+                <li><a href="/my-investments"><i class="bi bi-folder2-open"></i> My Investment</a></li>
+                <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
+                <li class="active"><a href="/history"><i class="bi bi-clock-history"></i> History</a></li>
+                <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
+                <li><a href="/withdraw"><i class="bi bi-cash"></i> Withdrawal</a></li>
+                <li><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+        <div class="tradingview-widget-container" id="mainContent">
+            <div class="navbar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <h2 class="m-2">Your Investment History</h2>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex align-items-center dashaccount">
+                    <span class="dashaccount"><a href="/profile">Account</a></span>
+                    <span class="dashaccount"><a href="/logout">Log out</a></span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            {% if investments %}
+            <div class="history-container">
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-calendar-date"></i> Date Invested</th>
+                                <th><i class="bi bi-folder2-open"></i> Plan</th>
+                                <th><i class="bi bi-currency-dollar"></i> Amount</th>
+                                <th><i class="bi bi-circle-fill"></i> Status</th>
+                                <th><i class="bi bi-graph-up-arrow"></i> Daily Earnings</th>
+                                <th><i class="bi bi-clock"></i> Days Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in investments %}
+                            <tr class="investment-row">
+                                <td>
+                                    <div class="date-cell">
+                                        <strong>{{ inv.date_invested|date:"M d" }}</strong>
+                                        <small class="text-muted d-block">{{ inv.date_invested|date:"Y" }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="plan-cell">
+                                        <strong>{{ inv.investment_plan.title }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="amount-cell">
+                                        <strong class="text-primary">${{ inv.amount|floatformat:2 }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="status-cell">
+                                        {% if inv.status == 'Active' %}
+                                        <span class="status-badge status-active">
+                                            <i class="bi bi-play-circle"></i> {{ inv.status }}
+                                        </span>
+                                        {% elif inv.status == 'Completed' %}
+                                        <span class="status-badge status-completed">
+                                            <i class="bi bi-check-circle"></i> {{ inv.status }}
+                                        </span>
+                                        {% elif inv.status == 'Pending' %}
+                                        <span class="status-badge status-pending">
+                                            <i class="bi bi-clock-history"></i> {{ inv.status }}
+                                        </span>
+                                        {% else %}
+                                        <span class="status-badge status-default">
+                                            <i class="bi bi-circle"></i> {{ inv.status }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="earnings-cell">
+                                        <strong class="text-success">+${{ inv.daily_earnings|floatformat:2 }}</strong>
+                                        <small class="text-muted d-block">per day</small>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="days-cell">
+                                        {% if inv.days_remaining > 0 %}
+                                        <strong class="text-info">{{ inv.days_remaining }}</strong>
+                                        <small class="text-muted d-block">days left</small>
+                                        {% else %}
+                                        <strong class="text-muted">Completed</strong>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-investments">
+                <div class="text-center p-5">
+                    <i class="bi bi-clock-history" style="font-size: 4rem; color: #6c757d; opacity: 0.5;"></i>
+                    <h3 class="mt-4 mb-3">No Investment History</h3>
+                    <p class="text-muted mb-4">You haven't made any investments yet. Start your investment journey
+                        today!</p>
+                    <a href="/packages" class="btn btn-primary btn-lg">
+                        <i class="bi bi-folder2-open"></i> View Investment Plans
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        .history-container {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background: #fff;
+            font-size: 0.9rem;
+        }
+
+        .history-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .history-table thead th {
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .history-table thead th i {
+            margin-right: 8px;
+            opacity: 0.9;
+        }
+
+        .investment-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .investment-row:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .investment-row:last-child {
+            border-bottom: none;
+        }
+
+        .history-table td {
+            padding: 20px 15px;
+            vertical-align: middle;
+            border: none;
+        }
+
+        .date-cell strong {
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .date-cell small {
+            font-size: 0.8rem;
+        }
+
+        .plan-cell strong {
+            color: #34495e;
+            font-size: 1rem;
+        }
+
+        .amount-cell strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #212529;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        .status-default {
+            background: #6c757d;
+            color: white;
+        }
+
+        .earnings-cell strong {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .earnings-cell small {
+            font-size: 0.8rem;
+        }
+
+        .return-cell strong {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .return-cell small {
+            font-size: 0.8rem;
+        }
+
+        .days-cell strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .days-cell small {
+            font-size: 0.8rem;
+        }
+
+        .no-investments {
+            margin: 50px 20px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .no-investments h3 {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .no-investments .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .no-investments .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .history-table {
+                font-size: 0.85rem;
+            }
+
+            .history-table thead th,
+            .history-table td {
+                padding: 15px 10px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .history-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .history-table thead th {
+                padding: 15px 8px;
+                font-size: 0.8rem;
+            }
+
+            .history-table td {
+                padding: 15px 8px;
+            }
+
+            .status-badge {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .history-table {
+                font-size: 0.8rem;
+            }
+
+            .history-table thead th,
+            .history-table td {
+                padding: 12px 6px;
+            }
+
+            .date-cell strong,
+            .plan-cell strong,
+            .amount-cell strong {
+                font-size: 0.9rem;
+            }
+
+            .earnings-cell strong,
+            .return-cell strong,
+            .days-cell strong {
+                font-size: 0.9rem;
+            }
+
+            .status-badge {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+
+            .no-investments {
+                padding: 40px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .history-container {
+                margin: 5px;
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .table-responsive {
+                border-radius: 8px;
+            }
+
+            .history-table thead th {
+                padding: 10px 4px;
+                font-size: 0.75rem;
+            }
+
+            .history-table td {
+                padding: 10px 4px;
+            }
+
+            .investment-row:hover {
+                transform: none;
+            }
+
+            .status-badge {
+                padding: 3px 6px;
+                font-size: 0.7rem;
+            }
+
+            .no-investments {
+                padding: 30px 15px;
+            }
+
+            .no-investments i {
+                font-size: 3rem !important;
+            }
+        }
+
+        /* Additional hover effects */
+        .history-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .history-table tbody tr:nth-child(even):hover {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+        }
+
+        /* Loading animation for dynamic content */
+        .investment-row {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger the animation for multiple rows */
+        .investment-row:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .investment-row:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .investment-row:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .investment-row:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .investment-row:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+    </style>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full-width');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        // Add smooth scrolling and enhanced interactions
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add click handler for investment rows (optional)
+            const investmentRows = document.querySelectorAll('.investment-row');
+            investmentRows.forEach(row => {
+                row.addEventListener('click', function (e) {
+                    // Optional: Add click functionality like viewing details
+                    console.log('Investment row clicked:', this);
+                });
+            });
+
+            // Add sorting functionality (optional)
+            const tableHeaders = document.querySelectorAll('.history-table thead th');
+            tableHeaders.forEach(header => {
+                header.style.cursor = 'pointer';
+                header.addEventListener('click', function () {
+                    // Optional: Implement sorting functionality
+                    console.log('Sort by:', this.textContent);
+                });
+            });
+        });
+    </script>
+
+    <script>window.$zoho = window.$zoho || {}; $zoho.salesiq = $zoho.salesiq || { ready: function () { } }</script>
+    <script id="zsiqscript"
+        src="https://salesiq.zohopublic.com/widget?wc=siq2bea00912d1b1bf53c77d126c6e4e78f69675c420b65348a018865c3bf81620e"
+        defer></script>
+    <script defer>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi,sw,nl,sv,da,no,fi,pl,cs,sk,hu,ro,bg,hr,sl,et,lv,lt,el,tr,he,th,vi,ms,id,tl,fa,ur,bn,ta,te,ml,kn,gu,pa,mr,ne,si,my,km,lo,ka,hy,az,kk,ky,uz,tg,mn,is,mt,cy,ga,eu,ca,gl,af,zu,xh,st,tn,ss,ve,ts,nr,yo,ig,ha,am,ti,om,so,mg,ny,sn,rw,lg,ak,tw,bm,ee,ff,kg,ln,lu,sg,wo,zu,bem,loz,lun,nso,zu',
+                },
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script defer type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>

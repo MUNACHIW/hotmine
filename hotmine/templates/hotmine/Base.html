@@ -29,28 +29,12 @@
             <div id="google_translate_element"></div>
             <nav class="nav d-flex align-items-center">
                 <ul class="nav-links d-flex align-items-center" style="width: 100%;">
-                    <li class="mx-3"><a href="" id="home" class="active">Home</a></li>
-                    <li class="mx-3"><a href="#about"
-                            onclick="document.getElementById('home').classList.remove('active'); this.classList.add('active');"
-                            id="aboutus">About
-                            Us</a></li>
-                    <li class="mx-3"><a href="#service"
-                            onclick="document.getElementById('aboutus').classList.remove('active'); this.classList.add('active');"
-                            id="services">Our
-                            Services</a></li>
-                    <li class="mx-3"><a href="#New_to_forex"
-                            onclick="document.getElementById('services').classList.remove('active'); this.classList.add('active');"
-                            id="academy">New To Forex</a>
-                    </li>
-                    <li class="mx-3"><a href="#howitwork"
-                            onclick="document.getElementById('academy').classList.remove('active'); this.classList.add('active');"
-                            id="howitworks">How
-                            it Works</a></li>
-
-
-                    <li class="mx-3"><a href="#contact"
-                            onclick="document.getElementById('howitworks').classList.remove('active'); this.classList.add('active');">Contact
-                            Us</a></li>
+                    <li class="mx-3"><a href="/" class="active">Home</a></li>
+                    <li class="mx-3"><a href="#about">About Us</a></li>
+                    <li class="mx-3"><a href="#service">Our Services</a></li>
+                    <li class="mx-3"><a href="#New_to_forex">New To Forex</a></li>
+                    <li class="mx-3"><a href="#howitwork">How it Works</a></li>
+                    <li class="mx-3"><a href="#contact">Contact Us</a></li>
                     <div class="login-button">
                         <a href="/login">Login</a>
                     </div>
@@ -177,6 +161,13 @@
         }
 
 
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
 
         const messagesLeft = [

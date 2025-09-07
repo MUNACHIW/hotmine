@@ -149,6 +149,7 @@
                 <li><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
                 <li><a href="/my-investments"><i class="bi bi-folder2-open"></i> My Investment</a></li>
                 <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
+                <li> <a href="/history"><i class="bi bi-clock-history"></i> History</a></li>
                 <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
                 <li class="active"><a href="#"><i class="bi bi-cash"></i> Withdrawal</a></li>
                 <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
@@ -174,7 +175,7 @@
                 <!-- Balance Display -->
                 <div class="balance-card">
                     <p class="balance-label">Available Balance</p>
-                    <h1 class="balance-amount">$0.00</h1>
+                    <h1 class="balance-amount">${{ amount|floatformat:"0" }}.00</h1>
                 </div>
 
                 <!-- Disabled Notice -->

@@ -315,11 +315,14 @@ def buy_view(request):
     return render(request, "hotmine/buy.html")
 
 
+@login_required
 def withdraw_view(request):
-    if request.method == "POST":
-        # Handle the withdrawal action
-        pass
-    return render(request, "hotmine/withdrawal.html")
+    user = request.user
+    amount_obj = Amount.objects.filter(user=user).first()
+
+    context = {"amount": amount_obj.amount if amount_obj else 0}
+
+    return render(request, "hotmine/withdrawal.html", context)
 
 
 @login_required
