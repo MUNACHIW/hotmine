@@ -5,7 +5,19 @@ from django.contrib import messages
 from django.urls import reverse
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from .forms import SignUpForm, LoginForm, UserUpdateForm, PasswordUpdateForm
+from .forms import (
+    SignUpForm,
+    LoginForm,
+    UserUpdateForm,
+    PasswordUpdateForm,
+    EmailVerificationForm,
+)
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
+from django.views import View
+
+
+# Add these to your existing forms import
 from .models import (
     Totalearnings,
     UserProfile,
@@ -332,3 +344,32 @@ def investment_history_view(request):
 
     context = {"investments": investments}
     return render(request, "hotmine/history.html", context)
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class SimplePasswordResetView(View):
+    """Single-step password reset - email verification and password reset in one form"""
+
+    template_name = "hotmine/password_reset.html"
+    form_class = EmailVerificationForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            if user:
+                messages.success(
+                    request,
+                    f"Password successfully updated for {user.email}! You can now login with your new password.",
+                )
+                return redirect("login")
+            else:
+                messages.error(request, "An error occurred. Please try again.")
+
+        return render(request, self.template_name, {"form": form})

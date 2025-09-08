@@ -16,4 +16,10 @@ urlpatterns = [
     path("updatepassword/", views.change_password, name="update_password"),
     path("withdraw", views.withdraw_view, name="withdraw"),
     path("history/", views.investment_history_view, name="transactions"),
+    # Add this single URL to your existing urls.py
+    path(
+        "password-reset/",
+        views.SimplePasswordResetView.as_view(),
+        name="password_reset",
+    ),
 ]

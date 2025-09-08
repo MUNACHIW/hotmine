@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import UserProfile
+from django.contrib.auth.forms import SetPasswordForm
+from django.core.exceptions import ValidationError
 import re
 
 
@@ -307,3 +309,81 @@ class PasswordUpdateForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+
+
+# Add these forms to your existing forms.py file
+
+
+class EmailVerificationForm(forms.Form):
+    """Single-step email verification and password reset"""
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Enter your email address"}
+        ),
+        help_text="Enter the email address associated with your account",
+    )
+
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Enter new password"}
+        ),
+        help_text="Your password must contain at least 8 characters.",
+    )
+
+    new_password2 = forms.CharField(
+        label="Confirm New Password",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Confirm new password"}
+        ),
+        help_text="Enter the same password as before, for verification.",
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+
+        # Check if user with this email exists
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise ValidationError("No account found with this email address.")
+
+        return email
+
+    def clean_new_password1(self):
+        password = self.cleaned_data.get("new_password1")
+
+        # Basic password validation
+        if len(password) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+
+        if password.isdigit():
+            raise ValidationError("Password cannot be entirely numeric.")
+
+        return password
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get("new_password1")
+        password2 = self.cleaned_data.get("new_password2")
+
+        if password1 and password2:
+            if password1 != password2:
+                raise ValidationError("The two password fields didn't match.")
+
+        return password2
+
+    def save(self, commit=True):
+        """Save the new password for the user"""
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("new_password1")
+
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            if commit:
+                user.save()
+            return user
+        except User.DoesNotExist:
+            return None
