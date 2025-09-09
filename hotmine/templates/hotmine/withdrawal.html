@@ -28,8 +28,8 @@
         }
 
         .withdrawal-form {
-            opacity: 0.5;
-            pointer-events: none;
+            opacity: 1;
+            pointer-events: all;
         }
 
         .form-group {
@@ -49,32 +49,44 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
         }
 
         .btn-withdrawal {
             width: 100%;
             padding: 15px;
-            background: #dc3545;
+            background: #28a745;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             font-weight: 600;
-            cursor: not-allowed;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .disabled-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
+        .btn-withdrawal:hover {
+            background: #218838;
+        }
+
+        .success-notice {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 2rem;
             text-align: center;
         }
 
-        .disabled-notice i {
+        .success-notice i {
             font-size: 2rem;
-            color: #856404;
+            color: #155724;
             margin-bottom: 1rem;
             display: block;
         }
@@ -133,6 +145,25 @@
             color: #28a745;
             margin-right: 0.5rem;
         }
+
+        .alert {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 
@@ -152,6 +183,8 @@
                 <li> <a href="/history"><i class="bi bi-clock-history"></i> History</a></li>
                 <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
                 <li class="active"><a href="#"><i class="bi bi-cash"></i> Withdrawal</a></li>
+                <li><a href="/withdrawal-history"><i class="bi bi-list-ul"></i> Withdrawal History</a>
+                </li>
                 <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
@@ -178,38 +211,43 @@
                     <h1 class="balance-amount">${{ amount|floatformat:"0" }}.00</h1>
                 </div>
 
-                <!-- Disabled Notice -->
-                <div class="disabled-notice">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <h4>Withdrawal Currently Disabled</h4>
-                    <p class="mb-0">You can only withdraw when your account have been funded.</p>
+                <!-- Success Notice -->
+                <div class="success-notice">
+                    <i class="bi bi-check-circle"></i>
+                    <h4>Withdrawal Now Available</h4>
+                    <p class="mb-0">Your account is eligible for withdrawals. Please complete the form below.</p>
                 </div>
 
-                <!-- Withdrawal Form (Disabled) -->
+                <!-- Withdrawal Form (Enabled) -->
                 <div class="withdrawal-header">
                     <h3><i class="bi bi-cash-stack"></i> Request Withdrawal</h3>
                     <p class="text-muted">Submit a withdrawal request for your earnings</p>
                 </div>
 
-                <form class="withdrawal-form">
+                <form class="withdrawal-form" method="post" action="{% url 'withdraw' %}">
+                    {% csrf_token %}
+                    <div id="alertContainer"></div>
+
                     <div class="form-group">
                         <label class="form-label" for="withdrawalAmount">
                             <i class="bi bi-currency-dollar"></i> Withdrawal Amount
                         </label>
-                        <input type="number" id="withdrawalAmount" class="form-control"
-                            placeholder="Enter amount to withdraw" step="0.01" min="0" disabled>
-                        <small class="text-muted">Minimum withdrawal: $50.00</small>
+                        <input type="number" id="withdrawalAmount" name="withdrawal_amount" class="form-control"
+                            placeholder="Enter amount to withdraw" step="0.01" min="10" max="{{ amount }}" required>
+                        <small class="text-muted">Minimum withdrawal: $10.00 | Maximum: ${{ amount|floatformat:"0"
+                            }}.00</small>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="withdrawalMethod">
                             <i class="bi bi-credit-card"></i> Withdrawal Method
                         </label>
-                        <select id="withdrawalMethod" class="form-control" disabled>
+                        <select id="withdrawalMethod" name="withdrawal_method" class="form-control" required>
                             <option value="">Select withdrawal method</option>
                             <option value="bank">Bank Transfer</option>
                             <option value="paypal">PayPal</option>
                             <option value="crypto">Cryptocurrency</option>
+                            <option value="mobile_money">Mobile Money</option>
                         </select>
                     </div>
 
@@ -217,21 +255,21 @@
                         <label class="form-label" for="accountDetails">
                             <i class="bi bi-bank"></i> Account Details
                         </label>
-                        <textarea id="accountDetails" class="form-control" rows="3"
+                        <textarea id="accountDetails" name="account_details" class="form-control" rows="3"
                             placeholder="Enter your account details (bank account, PayPal email, crypto wallet address, etc.)"
-                            disabled></textarea>
+                            required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="withdrawalNote">
                             <i class="bi bi-chat-text"></i> Additional Notes (Optional)
                         </label>
-                        <textarea id="withdrawalNote" class="form-control" rows="2"
-                            placeholder="Any additional information or special instructions" disabled></textarea>
+                        <textarea id="withdrawalNote" name="withdrawal_note" class="form-control" rows="2"
+                            placeholder="Any additional information or special instructions"></textarea>
                     </div>
 
-                    <button type="button" class="btn-withdrawal" disabled>
-                        <i class="bi bi-x-circle"></i> Withdrawal Disabled
+                    <button type="submit" class="btn-withdrawal">
+                        <i class="bi bi-check-circle"></i> Submit Withdrawal Request
                     </button>
                 </form>
 
@@ -243,19 +281,19 @@
                     <ul class="requirements-list">
                         <li>
                             <i class="bi bi-check-circle"></i>
-                            Minimum withdrawal amount: $50.00
+                            Minimum withdrawal amount: $10.00
                         </li>
                         <li>
                             <i class="bi bi-check-circle"></i>
-                            Minimum VIP Grade 3 required
+                            Processing time: 1-3 business days
                         </li>
                         <li>
                             <i class="bi bi-check-circle"></i>
-                            Processing time: 1 days
+                            Valid payment method required
                         </li>
                         <li>
                             <i class="bi bi-check-circle"></i>
-                            Valid payment method
+                            Account verification may be required
                         </li>
                     </ul>
                 </div>
@@ -293,19 +331,85 @@
             }
         });
 
-        // Disabled withdrawal form handling
+        // Withdrawal form validation and handling
         document.addEventListener('DOMContentLoaded', function () {
             const withdrawalForm = document.querySelector('.withdrawal-form');
-            const formElements = withdrawalForm.querySelectorAll('input, select, textarea, button');
+            const withdrawalAmount = document.getElementById('withdrawalAmount');
+            const withdrawalMethod = document.getElementById('withdrawalMethod');
+            const accountDetails = document.getElementById('accountDetails');
+            const alertContainer = document.getElementById('alertContainer');
 
-            formElements.forEach(element => {
-                element.disabled = true;
+            function showAlert(message, type = 'danger') {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type}" role="alert">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                        ${message}
+                    </div>
+                `;
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+
+            // Form validation
+            withdrawalForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const amount = parseFloat(withdrawalAmount.value);
+                const maxAmount = parseFloat(withdrawalAmount.max);
+                const method = withdrawalMethod.value;
+                const details = accountDetails.value.trim();
+
+                // Validation
+                if (amount < 10) {
+                    showAlert('Minimum withdrawal amount is $10.00');
+                    return;
+                }
+
+                if (amount > maxAmount) {
+                    showAlert(`Maximum withdrawal amount is $${maxAmount.toFixed(2)}`);
+                    return;
+                }
+
+                if (!method) {
+                    showAlert('Please select a withdrawal method');
+                    return;
+                }
+
+                if (!details) {
+                    showAlert('Please provide account details');
+                    return;
+                }
+
+                // Show success message and submit form
+                showAlert('Withdrawal request submitted successfully! Processing may take 1-3 business days.', 'success');
+
+                // Submit the form after a short delay
+                setTimeout(() => {
+                    this.submit();
+                }, 2000);
             });
 
-            // Show alert when trying to interact with disabled form
-            withdrawalForm.addEventListener('click', function (e) {
-                e.preventDefault();
-                alert('Withdrawal functionality is currently disabled. Please contact support for assistance.');
+            // Real-time amount validation
+            withdrawalAmount.addEventListener('input', function () {
+                const amount = parseFloat(this.value);
+                const maxAmount = parseFloat(this.max);
+
+                if (amount > maxAmount) {
+                    this.value = maxAmount;
+                }
+            });
+
+            // Update placeholder text based on withdrawal method
+            withdrawalMethod.addEventListener('change', function () {
+                const placeholders = {
+                    'bank': 'Enter bank name, account number, routing number, etc.',
+                    'paypal': 'Enter your PayPal email address',
+                    'crypto': 'Enter your cryptocurrency wallet address',
+                    'mobile_money': 'Enter your mobile money number and provider'
+                };
+
+                accountDetails.placeholder = placeholders[this.value] || 'Enter your account details';
             });
         });
     </script>

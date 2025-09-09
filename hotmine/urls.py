@@ -14,12 +14,18 @@ urlpatterns = [
     path("my-investments/", views.investment_record, name="my_investments"),
     path("buy/", views.buy_view, name="buy"),
     path("updatepassword/", views.change_password, name="update_password"),
-    path("withdraw", views.withdraw_view, name="withdraw"),
+    path("withdraw/", views.withdraw_view, name="withdraw"),
     path("history/", views.investment_history_view, name="transactions"),
     # Add this single URL to your existing urls.py
     path(
         "password-reset/",
         views.SimplePasswordResetView.as_view(),
         name="password_reset",
+    ),
+    path("withdrawal-history/", views.withdrawal_history, name="withdrawal_history"),
+    path(
+        "cancel-withdrawal/<int:withdrawal_id>/",
+        views.cancel_withdrawal,
+        name="cancel_withdrawal",
     ),
 ]

@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
+from decimal import Decimal
 
 
 class UserProfile(models.Model):
@@ -285,3 +287,84 @@ class totalwithdraw(models.Model):
         return (
             f"{self.user.username} - ${self.total_withdraw}" if self.user else "No User"
         )
+
+
+class WithdrawalRequest(models.Model):
+    WITHDRAWAL_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("rejected", "Rejected"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    WITHDRAWAL_METHOD_CHOICES = [
+        ("bank", "Bank Transfer"),
+        ("paypal", "PayPal"),
+        ("crypto", "Cryptocurrency"),
+        ("mobile_money", "Mobile Money"),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="withdrawal_requests"
+    )
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    withdrawal_method = models.CharField(
+        max_length=20, choices=WITHDRAWAL_METHOD_CHOICES
+    )
+    account_details = models.TextField()
+    withdrawal_note = models.TextField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20, choices=WITHDRAWAL_STATUS_CHOICES, default="pending"
+    )
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    processed_at = models.DateTimeField(blank=True, null=True)
+
+    # Admin fields
+    admin_note = models.TextField(
+        blank=True, null=True, help_text="Admin notes for this withdrawal"
+    )
+    processed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="processed_withdrawals",
+    )
+
+    # Transaction details
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    rejection_reason = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Withdrawal Request"
+        verbose_name_plural = "Withdrawal Requests"
+
+    def __str__(self):
+        return f"{self.user.username} - ${self.amount} - {self.status}"
+
+    @property
+    def can_be_cancelled(self):
+        """Check if withdrawal can be cancelled by user"""
+        return self.status in ["pending", "processing"]
+
+    def mark_as_completed(self, processed_by=None, transaction_id=None):
+        """Mark withdrawal as completed"""
+        self.status = "completed"
+        self.processed_at = timezone.now()
+        self.processed_by = processed_by
+        if transaction_id:
+            self.transaction_id = transaction_id
+        self.save()
+
+    def mark_as_rejected(self, reason, processed_by=None):
+        """Mark withdrawal as rejected"""
+        self.status = "rejected"
+        self.rejection_reason = reason
+        self.processed_at = timezone.now()
+        self.processed_by = processed_by
+        self.save()

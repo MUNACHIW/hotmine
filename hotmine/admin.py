@@ -10,6 +10,7 @@ from .models import (
     Amount,
     Totalearnings,
     totalwithdraw,
+    WithdrawalRequest,
 )
 
 
@@ -293,6 +294,23 @@ class TotalWithdrawAdmin(admin.ModelAdmin):
     list_display = ("user", "total_withdraw", "created_at", "updated_at")
     search_fields = ("user__username",)
     list_filter = ("created_at", "updated_at")
+
+
+@admin.register(WithdrawalRequest)
+class WithdrawalRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "amount",
+        "withdrawal_method",
+        "account_details",
+        "withdrawal_note",
+        "status",
+        "created_at",
+        "updated_at",
+        "rejection_reason",
+    )
+    search_fields = ("user__username",)
+    list_filter = ("status", "created_at", "updated_at")
 
 
 # Customize admin site headers
