@@ -10,7 +10,7 @@ from decimal import Decimal
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     withdrawal_enabled = models.BooleanField(
-        default=True, help_text="Allow this user to make withdrawal requests"
+        default=False, help_text="Allow this user to make withdrawal requests"
     )
     withdrawal_disabled_reason = models.TextField(
         blank=True, null=True, help_text="Reason for disabling withdrawals (optional)"
