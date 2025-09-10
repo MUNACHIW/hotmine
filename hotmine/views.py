@@ -343,7 +343,7 @@ def withdraw_view(request):
 
     # Ensure user profile exists
     user_profile, created = UserProfile.objects.get_or_create(
-        user=user, defaults={"withdrawal_enabled": True}
+        user=user, defaults={"withdrawal_enabled": False}
     )
 
     # Get user's balance from Amount table
