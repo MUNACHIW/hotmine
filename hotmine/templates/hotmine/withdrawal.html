@@ -32,6 +32,11 @@
             pointer-events: all;
         }
 
+        .withdrawal-form.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -75,6 +80,11 @@
             background: #218838;
         }
 
+        .btn-withdrawal:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
         .success-notice {
             background: #d4edda;
             border: 1px solid #c3e6cb;
@@ -91,6 +101,22 @@
             display: block;
         }
 
+        .disabled-notice {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .disabled-notice i {
+            font-size: 2rem;
+            color: #721c24;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
         .balance-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -98,6 +124,10 @@
             border-radius: 10px;
             margin-bottom: 2rem;
             text-align: center;
+        }
+
+        .balance-card.disabled {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
         }
 
         .balance-amount {
@@ -164,6 +194,25 @@
             background-color: #f8d7da;
             border-color: #f5c6cb;
         }
+
+        .contact-support {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .contact-support h5 {
+            color: #1565c0;
+            margin-bottom: 1rem;
+        }
+
+        .contact-support p {
+            color: #1976d2;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -180,11 +229,10 @@
                 <li><a href="/packages"><i class="bi bi-folder2-open"></i> Investment Plans</a></li>
                 <li><a href="/my-investments"><i class="bi bi-folder2-open"></i> My Investment</a></li>
                 <li><a href="/buy"><i class="bi bi-cart"></i> Buy</a></li>
-                <li> <a href="/history"><i class="bi bi-clock-history"></i> History</a></li>
+                <li><a href="/history"><i class="bi bi-clock-history"></i> History</a></li>
                 <li><a href="/updatepassword"><i class="bi bi-lock"></i> Change Password</a></li>
                 <li class="active"><a href="#"><i class="bi bi-cash"></i> Withdrawal</a></li>
-                <li><a href="/withdrawal-history"><i class="bi bi-list-ul"></i> Withdrawal History</a>
-                </li>
+                <li><a href="/withdrawal-history"><i class="bi bi-list-ul"></i> Withdrawal History</a></li>
                 <li class="active"><a href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
@@ -206,11 +254,28 @@
 
             <div class="withdrawal-container">
                 <!-- Balance Display -->
-                <div class="balance-card">
+                <div class="balance-card {% if withdrawal_disabled %}disabled{% endif %}">
                     <p class="balance-label">Available Balance</p>
                     <h1 class="balance-amount">${{ amount|floatformat:"0" }}.00</h1>
+                    {% if withdrawal_disabled %}
+                    <small style="opacity: 0.8;">Withdrawals Currently Disabled</small>
+                    {% endif %}
                 </div>
 
+                {% if withdrawal_disabled %}
+                <!-- Disabled Notice -->
+                <div class="disabled-notice">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h4>Withdrawals Temporarily Disabled</h4>
+                    <p class="mb-0">{{ disabled_reason }}</p>
+                </div>
+
+                <!-- Contact Support Card -->
+                <div class="contact-support">
+                    <h5><i class="bi bi-headset"></i> Need Help?</h5>
+                    <p>If you believe this is an error or need assistance, please contact our support team.</p>
+                </div>
+                {% else %}
                 <!-- Success Notice -->
                 <div class="success-notice">
                     <i class="bi bi-check-circle"></i>
@@ -218,7 +283,7 @@
                     <p class="mb-0">Withdrawals require a funded balance. Please top up before requesting</p>
                 </div>
 
-                <!-- Withdrawal Form (Enabled) -->
+                <!-- Withdrawal Form -->
                 <div class="withdrawal-header">
                     <h3><i class="bi bi-cash-stack"></i> Request Withdrawal</h3>
                     <p class="text-muted">Submit a withdrawal request for your earnings</p>
@@ -296,6 +361,46 @@
                         </li>
                     </ul>
                 </div>
+                {% endif %}
+
+                <!-- Recent Withdrawals (show regardless of status) -->
+                {% if recent_withdrawals %}
+                <div class="requirements-card">
+                    <h5 class="requirements-title">
+                        <i class="bi bi-clock-history"></i> Recent Withdrawal Requests
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for withdrawal in recent_withdrawals %}
+                                <tr>
+                                    <td>${{ withdrawal.amount }}</td>
+                                    <td>{{ withdrawal.get_withdrawal_method_display }}</td>
+                                    <td>
+                                        <span class="badge 
+                                                {% if withdrawal.status == 'completed' %}bg-success
+                                                {% elif withdrawal.status == 'rejected' %}bg-danger
+                                                {% elif withdrawal.status == 'processing' %}bg-warning
+                                                {% else %}bg-secondary{% endif %}">
+                                            {{ withdrawal.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ withdrawal.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -330,7 +435,8 @@
             }
         });
 
-        // Withdrawal form validation and handling
+        // Withdrawal form validation and handling (only if withdrawals are enabled)
+        {% if not withdrawal_disabled %}
         document.addEventListener('DOMContentLoaded', function () {
             const withdrawalForm = document.querySelector('.withdrawal-form');
             const withdrawalAmount = document.getElementById('withdrawalAmount');
@@ -366,7 +472,7 @@
                 }
 
                 if (amount > maxAmount) {
-                    showAlert(`Maximum withdrawal amount is $${maxAmount.toFixed(2)}`);
+                    showAlert(`Maximum withdrawal amount is ${maxAmount.toFixed(2)}`);
                     return;
                 }
 
@@ -411,6 +517,7 @@
                 accountDetails.placeholder = placeholders[this.value] || 'Enter your account details';
             });
         });
+        {% endif %}
     </script>
 
     <!-- Google Translate Script -->

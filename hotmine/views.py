@@ -338,105 +338,31 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def withdraw_view(request):
-    """Display withdrawal page and handle withdrawal form submission"""
+    """Display withdrawal page with only queried amount from DB"""
     user = request.user
+
+    # Ensure user profile exists
+    user_profile, created = UserProfile.objects.get_or_create(
+        user=user, defaults={"withdrawal_enabled": True}
+    )
+
+    # Get user's balance from Amount table
     amount_obj = Amount.objects.filter(user=user).first()
     user_balance = amount_obj.amount if amount_obj else Decimal("0.00")
 
-    # Get user's recent withdrawal requests
-    recent_withdrawals = WithdrawalRequest.objects.filter(user=user)[:5]
+    # Get user's recent withdrawals
+    recent_withdrawals = WithdrawalRequest.objects.filter(user=user).order_by(
+        "-created_at"
+    )[:5]
 
     context = {
+        "withdrawal_disabled": not user_profile.withdrawal_enabled,
+        "disabled_reason": getattr(user_profile, "withdrawal_disabled_reason", ""),
         "amount": user_balance,
         "recent_withdrawals": recent_withdrawals,
-        "min_withdrawal": Decimal("10.00"),
     }
 
-    if request.method == "POST":
-        return process_withdrawal_request(request, user, user_balance)
-
     return render(request, "hotmine/withdrawal.html", context)
-
-
-def process_withdrawal_request(request, user, user_balance):
-    """Process withdrawal request"""
-    try:
-        # Get form data
-        withdrawal_amount = Decimal(str(request.POST.get("withdrawal_amount", "0")))
-        withdrawal_method = request.POST.get("withdrawal_method", "")
-        account_details = request.POST.get("account_details", "").strip()
-        withdrawal_note = request.POST.get("withdrawal_note", "").strip()
-
-        # Validation
-        min_withdrawal = Decimal("10.00")
-
-        if withdrawal_amount < min_withdrawal:
-            messages.error(request, f"Minimum withdrawal amount is ${min_withdrawal}")
-            return redirect("withdraw")
-
-        if withdrawal_amount > user_balance:
-            messages.error(request, "Insufficient balance for this withdrawal amount")
-            return redirect("withdraw")
-
-        if not withdrawal_method:
-            messages.error(request, "Please select a withdrawal method")
-            return redirect("withdraw")
-
-        if not account_details:
-            messages.error(request, "Please provide account details")
-            return redirect("withdraw")
-
-        # Check for pending withdrawals (optional - prevent multiple pending requests)
-        pending_withdrawals = WithdrawalRequest.objects.filter(
-            user=user, status__in=["pending", "processing"]
-        ).count()
-
-        if pending_withdrawals >= 3:  # Limit to 3 pending withdrawals
-            messages.error(
-                request,
-                "You have too many pending withdrawal requests. Please wait for them to be processed.",
-            )
-            return redirect("withdraw")
-
-        # Create withdrawal request using database transaction
-        with transaction.atomic():
-            withdrawal_request = WithdrawalRequest.objects.create(
-                user=user,
-                amount=withdrawal_amount,
-                withdrawal_method=withdrawal_method,
-                account_details=account_details,
-                withdrawal_note=withdrawal_note,
-                status="pending",
-            )
-
-            # Optional: Immediately deduct from user balance (uncomment if you want to hold the funds)
-            # amount_obj = Amount.objects.get(user=user)
-            # amount_obj.amount -= withdrawal_amount
-            # amount_obj.save()
-
-            # Log the withdrawal request
-            logger.info(
-                f"Withdrawal request created: {withdrawal_request.id} for user {user.username}"
-            )
-
-            messages.success(
-                request,
-                f"Withdrawal request of ${withdrawal_amount} submitted successfully! "
-                f"Request ID: {withdrawal_request.id}. Processing may take 1-3 business days.",
-            )
-
-    except ValueError:
-        messages.error(request, "Invalid withdrawal amount")
-    except Exception as e:
-        logger.error(
-            f"Error processing withdrawal request for user {user.username}: {str(e)}"
-        )
-        messages.error(
-            request,
-            "An error occurred while processing your withdrawal request. Please try again.",
-        )
-
-    return redirect("withdraw")
 
 
 @login_required

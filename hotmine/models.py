@@ -9,12 +9,23 @@ from decimal import Decimal
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    withdrawal_enabled = models.BooleanField(
+        default=True, help_text="Allow this user to make withdrawal requests"
+    )
+    withdrawal_disabled_reason = models.TextField(
+        blank=True, null=True, help_text="Reason for disabling withdrawals (optional)"
+    )
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile" if self.user else "No User"
+
+    @property
+    def can_withdraw(self):
+        """Check if user can make withdrawals"""
+        return self.withdrawal_enabled
 
 
 @receiver(post_save, sender=User)

@@ -1,7 +1,10 @@
+# Updated admin.py with withdrawal controls
+
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.contrib import messages
 from .models import (
     UserProfile,
     Investment,
@@ -16,10 +19,76 @@ from .models import (
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ["user", "phone_number", "created_at"]
-    list_filter = ["created_at"]
+    list_display = [
+        "user",
+        "phone_number",
+        "withdrawal_status_display",
+        "withdrawal_enabled",
+        "created_at",
+    ]
+    list_filter = ["created_at", "withdrawal_enabled"]
     search_fields = ["user__username", "user__email", "phone_number"]
     readonly_fields = ["created_at", "updated_at"]
+    list_editable = ["withdrawal_enabled"]  # Allow quick editing from list view
+
+    fieldsets = (
+        ("User Information", {"fields": ("user", "phone_number")}),
+        (
+            "Withdrawal Controls",
+            {
+                "fields": ("withdrawal_enabled", "withdrawal_disabled_reason"),
+                "description": "Control whether this user can make withdrawal requests",
+            },
+        ),
+        (
+            "Timestamps",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
+
+    def withdrawal_status_display(self, obj):
+        """Display withdrawal status with colored indicators"""
+        if obj.withdrawal_enabled:
+            return format_html(
+                '<span style="color: green; font-weight: bold;">✓ Enabled</span>'
+            )
+        else:
+            reason = (
+                f" - {obj.withdrawal_disabled_reason}"
+                if obj.withdrawal_disabled_reason
+                else ""
+            )
+            return format_html(
+                '<span style="color: red; font-weight: bold;">✗ Disabled</span>{}'.format(
+                    reason[:50]
+                )
+            )
+
+    withdrawal_status_display.short_description = "Withdrawal Status"
+
+    actions = ["enable_withdrawals", "disable_withdrawals"]
+
+    def enable_withdrawals(self, request, queryset):
+        """Bulk action to enable withdrawals for selected users"""
+        updated = queryset.update(
+            withdrawal_enabled=True, withdrawal_disabled_reason=""
+        )
+        self.message_user(
+            request, f"Enabled withdrawals for {updated} user(s).", messages.SUCCESS
+        )
+
+    enable_withdrawals.short_description = "Enable withdrawals for selected users"
+
+    def disable_withdrawals(self, request, queryset):
+        """Bulk action to disable withdrawals for selected users"""
+        updated = queryset.update(withdrawal_enabled=False)
+        self.message_user(
+            request,
+            f"Disabled withdrawals for {updated} user(s). Don't forget to add reasons individually.",
+            messages.WARNING,
+        )
+
+    disable_withdrawals.short_description = "Disable withdrawals for selected users"
 
 
 @admin.register(CryptoWallet)
@@ -302,15 +371,111 @@ class WithdrawalRequestAdmin(admin.ModelAdmin):
         "user",
         "amount",
         "withdrawal_method",
-        "account_details",
-        "withdrawal_note",
+        "user_withdrawal_status_display",  # Add this new field
         "status",
         "created_at",
-        "updated_at",
-        "rejection_reason",
     )
-    search_fields = ("user__username",)
-    list_filter = ("status", "created_at", "updated_at")
+    list_filter = (
+        "status",
+        "withdrawal_method",
+        "created_at",
+        "user__userprofile__withdrawal_enabled",  # Filter by withdrawal permission
+    )
+    search_fields = ("user__username", "user__email")
+    readonly_fields = ("created_at", "updated_at")
+
+    fieldsets = (
+        (
+            "Withdrawal Information",
+            {
+                "fields": (
+                    "user",
+                    "amount",
+                    "withdrawal_method",
+                    "account_details",
+                    "withdrawal_note",
+                )
+            },
+        ),
+        (
+            "Status & Processing",
+            {
+                "fields": (
+                    "status",
+                    "admin_note",
+                    "transaction_id",
+                    "rejection_reason",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": ("created_at", "updated_at", "processed_at"),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+    def user_withdrawal_status_display(self, obj):
+        """Show if user has withdrawal permissions"""
+        try:
+            if obj.user.userprofile.withdrawal_enabled:
+                return format_html('<span style="color: green;">✓ Allowed</span>')
+            else:
+                return format_html('<span style="color: red;">✗ Blocked</span>')
+        except:
+            return format_html('<span style="color: orange;">? Unknown</span>')
+
+    user_withdrawal_status_display.short_description = "User Withdrawal Permission"
+
+    actions = ["approve_withdrawals", "reject_withdrawals", "disable_user_withdrawals"]
+
+    def approve_withdrawals(self, request, queryset):
+        """Bulk action to approve withdrawal requests"""
+        updated = queryset.filter(status__in=["pending", "processing"]).update(
+            status="completed"
+        )
+        self.message_user(
+            request, f"Approved {updated} withdrawal request(s).", messages.SUCCESS
+        )
+
+    approve_withdrawals.short_description = "Approve selected withdrawals"
+
+    def reject_withdrawals(self, request, queryset):
+        """Bulk action to reject withdrawal requests"""
+        updated = queryset.filter(status__in=["pending", "processing"]).update(
+            status="rejected"
+        )
+        self.message_user(
+            request, f"Rejected {updated} withdrawal request(s).", messages.WARNING
+        )
+
+    reject_withdrawals.short_description = "Reject selected withdrawals"
+
+    def disable_user_withdrawals(self, request, queryset):
+        """Bulk action to disable withdrawals for users who made these requests"""
+        users_updated = 0
+        for withdrawal in queryset:
+            try:
+                withdrawal.user.userprofile.withdrawal_enabled = False
+                withdrawal.user.userprofile.withdrawal_disabled_reason = (
+                    f"Disabled via withdrawal request #{withdrawal.id}"
+                )
+                withdrawal.user.userprofile.save()
+                users_updated += 1
+            except:
+                pass
+
+        self.message_user(
+            request,
+            f"Disabled withdrawals for {users_updated} user(s).",
+            messages.WARNING,
+        )
+
+    disable_user_withdrawals.short_description = (
+        "Disable withdrawals for selected users"
+    )
 
 
 # Customize admin site headers
