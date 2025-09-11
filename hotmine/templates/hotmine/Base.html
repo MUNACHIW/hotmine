@@ -170,56 +170,108 @@
         });
 
 
-        const messagesLeft = [
-            "🎉 Alice just earned $5000 USD!",
-            "Chris just joined the network!",
-            "Philip has earned $2000 USD!",
-            "🔥 Mining boost activated!",
-            "💰 New payout sent to Atlanta"
+        async function getRandomName() {
+            try {
+                const res = await fetch("https://randomuser.me/api/");
+                const data = await res.json();
+                const user = data.results[0];
+                return `${user.name.first} ${user.name.last}`;
+            } catch (e) {
+                // fallback name if API fails
+                const fallbackNames = ["Alex Morgan", "Jamie Lee", "Taylor Smith", "Jordan Brown"];
+                return fallbackNames[Math.floor(Math.random() * fallbackNames.length)];
+            }
+        }
+
+        // 50 random tasks
+        const operations = [
+            name => `🎉 ${name} just earned $${rand(1000, 9000)} USD!`,
+            name => `${name} just joined the network!`,
+            name => `🔥 ${name} activated a mining boost!`,
+            name => `💰 ${name} just staked ${rand(500, 5000)} tokens!`,
+            name => `📈 ${name} increased hashrate by ${rand(10, 50)}%`,
+            name => `🎯 ${name} is trading with $${rand(1000, 10000)}`,
+            name => `${name} completed a transaction of $${rand(200, 5000)}`,
+            name => `${name} invested $${rand(5000, 20000)} in crypto`,
+            name => `${name} withdrew $${rand(100, 5000)} successfully`,
+            name => `${name} referred 3 new members`,
+            name => `${name} unlocked VIP mining tier`,
+            name => `${name} purchased ${rand(1, 10)} mining rigs`,
+            name => `${name} earned a bonus of $${rand(50, 500)}`,
+            name => `${name} joined a staking pool`,
+            name => `${name} upgraded account to Premium`,
+            name => `${name} mined ${rand(0.5, 5)} BTC`,
+            name => `${name} mined ${rand(5, 50)} ETH`,
+            name => `${name} just claimed daily reward`,
+            name => `${name} boosted mining speed by ${rand(5, 25)}%`,
+            name => `${name} sold assets worth $${rand(1000, 15000)}`,
+            name => `${name} bought assets worth $${rand(1000, 15000)}`,
+            name => `${name} earned referral bonus of $${rand(10, 200)}`,
+            name => `${name} joined a liquidity pool`,
+            name => `${name} swapped tokens worth $${rand(100, 5000)}`,
+            name => `${name} burned ${rand(100, 1000)} tokens`,
+            name => `${name} minted ${rand(100, 1000)} tokens`,
+            name => `${name} reached top 10 leaderboard`,
+            name => `${name} completed KYC verification`,
+            name => `${name} received payout to wallet`,
+            name => `${name} deposited $${rand(500, 5000)}`,
+            name => `${name} withdrew $${rand(500, 5000)}`,
+            name => `${name} earned cashback of $${rand(5, 100)}`,
+            name => `${name} joined NFT marketplace`,
+            name => `${name} sold NFT for $${rand(100, 5000)}`,
+            name => `${name} bought NFT for $${rand(100, 5000)}`,
+            name => `${name} unlocked rare achievement`,
+            name => `${name} reached mining level ${rand(2, 20)}`,
+            name => `${name} earned $${rand(100, 5000)} from trading`,
+            name => `${name} joined DeFi project`,
+            name => `${name} claimed airdrop of ${rand(100, 1000)} tokens`,
+            name => `${name} participated in governance vote`,
+            name => `${name} created a new mining pool`,
+            name => `${name} upgraded mining hardware`,
+            name => `${name} earned $${rand(50, 500)} from staking`,
+            name => `${name} joined beta testing program`,
+            name => `${name} completed security audit`,
+            name => `${name} enabled 2FA security`,
+            name => `${name} reached daily mining goal`,
+            name => `${name} invited friends to join`,
+            name => `${name} earned loyalty reward of $${rand(10, 200)}`
         ];
 
-        const messagesRight = [
-            "🚀 John just joined the network!",
-            "💬 Sarah just joined a mining pool!",
-            "📈 Hashrate increased by 20%",
-            "🎯 Somebody is trading with $3000",
-            "🎯 Some user just staked 1000 tokens!",
-            "Fred just completed his transaction!",
-            "20000USD was invested by mark",
-        ];
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
 
         function showPopup(message, side = "right", level = 1) {
             const popup = document.createElement("div");
             popup.className = `popup ${side}${level}`;
 
-            // Highlight numbers like $5000 or $3000
-            const formattedMessage = message.replace(/\$?(\d{3,})/g, (match) => {
+            // Highlight numbers like $5000 or 3000
+            const formattedMessage = message.replace(/\$?(\d{3,})/g, match => {
                 return `<span class="highlight">${match}</span>`;
             });
 
             popup.innerHTML = formattedMessage;
-
             document.getElementById("popup-container").appendChild(popup);
 
-            // Trigger animation
             setTimeout(() => popup.classList.add("show"), 100);
 
-            // Remove after 5 seconds
             setTimeout(() => {
                 popup.classList.remove("show");
                 setTimeout(() => popup.remove(), 600);
             }, 5000);
         }
 
+        // Show popups slower
+        setInterval(async () => {
+            const nameLeft = await getRandomName();
+            const nameRight = await getRandomName();
 
-        // Show popups in sequence
-        setInterval(() => {
-            const msgLeft = messagesLeft[Math.floor(Math.random() * messagesLeft.length)];
-            const msgRight = messagesRight[Math.floor(Math.random() * messagesRight.length)];
+            const msgLeft = operations[Math.floor(Math.random() * operations.length)](nameLeft);
+            const msgRight = operations[Math.floor(Math.random() * operations.length)](nameRight);
 
-            showPopup(msgLeft, "left", 1); // Bottom left, higher z-index
-            setTimeout(() => showPopup(msgRight, "right", 2), 2000); // Above right, lower z-index
-        }, 8000);
+            showPopup(msgLeft, "left", 1);
+            setTimeout(() => showPopup(msgRight, "right", 2), 3000);
+        }, 12000); // 12 seconds cycle
 
     </script>
 
